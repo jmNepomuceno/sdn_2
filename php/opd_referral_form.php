@@ -26,7 +26,7 @@
 
     // echo $data[0]['hospital_name']
     $hospital_names = $data;
-
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">

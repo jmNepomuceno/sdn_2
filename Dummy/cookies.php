@@ -39,7 +39,7 @@ $sessionID = session_id();
 setcookie('PHPSESSID', $sessionID, 0, '/', '', true, true);
 
 // Monitor the session and echo the session ID and CSRF token
- echo "Session ID: " . $sessionID . "<br>";
+echo "Session ID: " . $sessionID . "<br>";
 echo "CSRF Token: " . $_SESSION['_csrf_token'];
 
 ?>

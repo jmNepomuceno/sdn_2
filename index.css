@@ -47,7 +47,7 @@
     align-items: center;
     z-index: 10;
     
-    display:none;
+    /* display:none; */
 }
 
 .container .main-content .letter-border {
@@ -185,7 +185,7 @@
     margin-top:5%;
     width:60%;
     height: 80%;
-    /* border:1px solid black; */
+    /* border:3px solid red; */
     z-index: 40;
     border-radius: 10px;
     display:flex;
@@ -199,7 +199,7 @@
     border:1px solid rgba(255, 255, 255, 0.18);
     box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
 
-    /* display:none; */
+    display:none;
 }
 
 .container .sub-content .sub-content-header-div{
@@ -270,16 +270,15 @@
 
 .container .sub-content .sub-content-registration-form{
     width:80%;
-    height: 500px;
+    height: 70%;
     overflow-y: auto;
     margin-top:2%;
-
     /* display:none; */
 }
 
 .container .sub-content .sub-content-authorization-form{
     width:80%;
-    height: 500px;
+    height: 70%;
     overflow-y: auto;
     margin-top:2%;
 

@@ -76,6 +76,7 @@
                     $_SESSION['user_type'] = 'outside';
 
                     $_SESSION['post_value_reload'] = 'false';
+                    $_SESSION["sub_what"] = "";
 
                     // Get the current date and time
                     $timezone = new DateTimeZone('Asia/Manila'); // Replace 'Your/Timezone' with your actual time zone
@@ -163,7 +164,8 @@
             $_SESSION['user_type'] = 'admin';
             // $_SESSION["process_timer"] = [];
             $_SESSION['post_value_reload'] = 'false';
-
+            $_SESSION["sub_what"] = "";
+            
             // Get the current date and time
             $timezone = new DateTimeZone('Asia/Manila'); // Replace 'Your/Timezone' with your actual time zone
             $currentDateTime = new DateTime("",$timezone);

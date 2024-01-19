@@ -115,8 +115,8 @@
     // echo "success";
 
 
-    $sql = "INSERT INTO incoming_referrals (hpercode, reference_num, patlast, patfirst, patmiddle, patsuffix, type, referred_by, landline_no, mobile_no, date_time, status, refer_to, parent_guardian , phic_member, transport, referring_doctor, chief_complaint_history, reason, diagnosis, bp, hr, rr, temp, weight, pertinent_findings)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $sql = "INSERT INTO incoming_referrals (hpercode, reference_num, patlast, patfirst, patmiddle, patsuffix, type, referred_by, landline_no, mobile_no, date_time, status, refer_to, sensitive_case, parent_guardian , phic_member, transport, referring_doctor, chief_complaint_history, reason, diagnosis, bp, hr, rr, temp, weight, pertinent_findings)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)";
 
     // $sql = "INSERT INTO incoming_referrals (hpercode, reference_num, patlast, patfirst, patmiddle, patsuffix, type, referred_by, landline_no, mobile_no, date_time, status, refer_to, sensitive)
     // VALUES (?,?,?,?,?,?,?,?,?,?,?,?, ?,?)";
@@ -139,24 +139,41 @@
     $stmt->bindParam(12, $status, PDO::PARAM_STR);
 
     $stmt->bindParam(13, $refer_to, PDO::PARAM_STR);
-    // $stmt->bindParam(14, $sensitive_case, PDO::PARAM_STR);
+    $stmt->bindParam(14, $sensitive_case, PDO::PARAM_STR);
 
-    $stmt->bindParam(14, $parent_guardian, PDO::PARAM_STR);
-    $stmt->bindParam(15, $phic_member, PDO::PARAM_STR);
-    $stmt->bindParam(16, $transport, PDO::PARAM_STR);
-    $stmt->bindParam(17, $referring_doc, PDO::PARAM_STR);
+    $stmt->bindParam(15, $parent_guardian, PDO::PARAM_STR);
+    $stmt->bindParam(16, $phic_member, PDO::PARAM_STR);
+    $stmt->bindParam(17, $transport, PDO::PARAM_STR);
+    $stmt->bindParam(18, $referring_doc, PDO::PARAM_STR);
 
-    $stmt->bindParam(18, $complaint_history_input, PDO::PARAM_STR);
-    $stmt->bindParam(19, $reason_referral_input, PDO::PARAM_STR);
-    $stmt->bindParam(20, $diagnosis, PDO::PARAM_STR);
+    $stmt->bindParam(19, $complaint_history_input, PDO::PARAM_STR);
+    $stmt->bindParam(20, $reason_referral_input, PDO::PARAM_STR);
+    $stmt->bindParam(21, $diagnosis, PDO::PARAM_STR);
 
-    $stmt->bindParam(21, $bp_input, PDO::PARAM_INT);
-    $stmt->bindParam(22, $hr_input, PDO::PARAM_STR);
-    $stmt->bindParam(23, $rr_input, PDO::PARAM_STR);
+    $stmt->bindParam(22, $bp_input, PDO::PARAM_INT);
+    $stmt->bindParam(23, $hr_input, PDO::PARAM_STR);
+    $stmt->bindParam(24, $rr_input, PDO::PARAM_STR);
 
-    $stmt->bindParam(24, $temp_input, PDO::PARAM_STR);
-    $stmt->bindParam(25, $weight_input, PDO::PARAM_INT);
-    $stmt->bindParam(26, $pe_findings_input, PDO::PARAM_STR);
+    $stmt->bindParam(25, $temp_input, PDO::PARAM_STR);
+    $stmt->bindParam(26, $weight_input, PDO::PARAM_INT);
+    $stmt->bindParam(27, $pe_findings_input, PDO::PARAM_STR);
+
+    // $stmt->bindParam(14, $parent_guardian, PDO::PARAM_STR);
+    // $stmt->bindParam(15, $phic_member, PDO::PARAM_STR);
+    // $stmt->bindParam(16, $transport, PDO::PARAM_STR);
+    // $stmt->bindParam(17, $referring_doc, PDO::PARAM_STR);
+
+    // $stmt->bindParam(18, $complaint_history_input, PDO::PARAM_STR);
+    // $stmt->bindParam(19, $reason_referral_input, PDO::PARAM_STR);
+    // $stmt->bindParam(20, $diagnosis, PDO::PARAM_STR);
+
+    // $stmt->bindParam(21, $bp_input, PDO::PARAM_INT);
+    // $stmt->bindParam(22, $hr_input, PDO::PARAM_STR);
+    // $stmt->bindParam(23, $rr_input, PDO::PARAM_STR);
+
+    // $stmt->bindParam(24, $temp_input, PDO::PARAM_STR);
+    // $stmt->bindParam(25, $weight_input, PDO::PARAM_INT);
+    // $stmt->bindParam(26, $pe_findings_input, PDO::PARAM_STR);
 
     if ($stmt->execute()) {
         // Statement executed successfully

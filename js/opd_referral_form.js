@@ -102,7 +102,7 @@ $(document).ready(function(){
                 }
             }
 
-            console.log(data)
+            console.log(typeof data.sensitive_case)
 
             $.ajax({
                 url: './php/add_referral_form.php',
