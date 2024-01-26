@@ -28,6 +28,8 @@ $(document).ready(function(){
     let global_hpercode_all = document.querySelectorAll('.hpercode')
     let global_stopwatch_all = document.querySelectorAll('.stopwatch')
     let global_pat_status = document.querySelectorAll('.pat-status-incoming')
+    let global_breakdown_index = 0;
+    let prev_clicked_breakdown_index = 0
 
     let intervalIDs = {};
     let length_curr_table = document.querySelectorAll('.hpercode').length;
@@ -72,7 +74,7 @@ $(document).ready(function(){
     document.addEventListener('mousemove', handleUserActivity);
 
     // Set up a timer to check user inactivity periodically
-    const inactivityInterval = 10000; // Execute every 5 seconds (adjust as needed)
+    const inactivityInterval = 2000; // Execute every 5 seconds (adjust as needed)
 
     function startInactivityTimer() {
         inactivityTimer = setInterval(() => {
@@ -118,6 +120,9 @@ $(document).ready(function(){
             // console.log($('#pat-status-form').text())
             $.ajax({
                 url: './php/fetch_onProcess.php',
+                data : {
+                    hpercode : global_single_hpercode
+                },
                 method: "POST",
                 success: function(response){     
                     response = JSON.parse(response);           
@@ -163,9 +168,18 @@ $(document).ready(function(){
         });
     });
 
+    // const expand_elements = document.querySelectorAll('.accordion-btn');
+    // pencil_elements.forEach(function(element, index) {
+    //     element.addEventListener('click', function() {
+    //         console.log('den')
+    //         ajax_method(index)
+    //     });
+    // });
+
     //end - open modal 
 
     const pendingFunction = (response) =>{
+        console.log(response)
         $('#pat-status-form').text(response[0].status)
 
         // if(response[0].status === 'Pending'){
@@ -231,6 +245,8 @@ $(document).ready(function(){
             $('#cancel-form').removeClass('hidden')
 
             $('#approval-details-id').text('Approval Details')
+            $('#classification-lbl').text(response[0].pat_class)
+            $('#admin-action-lbl').text(response[0].approval_details)
         }
 
         if(response[0].status === 'Deferred'){
@@ -253,7 +269,9 @@ $(document).ready(function(){
             $('#approval-details').removeClass('hidden')
 
             $('#approval-details-id').text('Deferral Details')
-        }
+            $('#classification-lbl').text(response[0].pat_class)
+            $('#admin-action-lbl').text(response[0].approval_details)
+        }   
 
         if(response[0].status === 'Arrived'){
             $('#temp-forward-form').addClass('hidden')
@@ -398,10 +416,6 @@ $(document).ready(function(){
                 }
             }
          }
-         
- 
-        
-
         
         // need to update the laman of all global variables on every populate of tbody.
         // update the global_hpercode_all based on the current laman of the table
@@ -441,11 +455,11 @@ $(document).ready(function(){
                 fifo_style = 'opacity-50 pointer-events-none'
             }
             const tr = document.createElement('tr')
-            tr.className = 'h-[61px] ' + fifo_style
+            tr.className = 'tr-incoming ' + fifo_style
 
             const td_name = document.createElement('td')
             td_name.textContent = response[i]['reference_num'] + " - " + index
-            td_name.className = 'text-sm'
+            td_name.className = 'text-xs'
             const td_reference_num = document.createElement('td')
             td_reference_num.textContent = response[i]['patlast'] + ", " + response[i]['patfirst'] + " " + response[i]['patmiddle']
 
@@ -471,18 +485,91 @@ $(document).ready(function(){
             td_referr_label_2.className = `text-[7.7pt] ml-1`
 
             const td_time = document.createElement('td')
+            td_time.className = "flex flex-col justify-center items-left relative"
+
+            const fa_plus = document.createElement('i')
+            fa_plus.className = "accordion-btn absolute bottom-0 right-0 fa-solid fa-plus border-2 border-[#a4b7c1] p-1 text-xs rounded bg-[#d1dbe0] opacity-40 cursor-pointer hover:opacity-100"
 
             const td_time_div_label_1 = document.createElement('label')
             td_time_div_label_1.textContent = " Referred: " + response[i]['date_time']
-            td_time_div_label_1.className = `text-sm`
+            td_time_div_label_1.className = `text-sm w-[95%] border-b border-[#bfbfbf] mt-1`
+
+            //calculate the difference between initial Referred to Reception time
+            const date1 = new Date(response[i]['date_time']);
+            const date2 = new Date(response[i]['reception_time']);
+
+            // Calculate the difference in milliseconds
+            const differenceInMilliseconds = Math.abs(date1 - date2);
+
+            // Convert the difference to hours, minutes, and seconds
+            const hours_bd = Math.floor(differenceInMilliseconds / 3600000);
+            const minutes_bd = Math.floor((differenceInMilliseconds % 3600000) / 60000);
+            const seconds_bd = Math.floor((differenceInMilliseconds % 60000) / 1000);
+
+            // console.log(`Difference: ${hours}:${minutes}:${seconds}`);
+
+            const td_time_div_label_1_1 = document.createElement('label')
+            td_time_div_label_1_1.textContent = `Waiting: ${hours_bd}:${minutes_bd}:${seconds_bd}`
+            td_time_div_label_1_1.className = `text-sm w-[95%] border-b border-[#bfbfbf] mt-1`
 
             const td_time_div_label_2 = document.createElement('label')
-            td_time_div_label_2.textContent = (response[i]['approved_time']) ?  " Processed: " + response[i]['approved_time'] : " Processed: 00:00:00"
-            td_time_div_label_2.className = `text-sm`
+            // td_time_div_label_2.textContent = (response[i]['status'] !== 'Pending') ?  "Processed: " + response[i]['approved_time'] : " Reception: 00:00:00"
+            console.log(response)
+            td_time_div_label_2.textContent = (response[i]['status'] !== 'Pending') ?  "Reception: " + response[i]['reception_time'] : " Reception: 00:00:00"
+            td_time_div_label_2.className = `text-sm w-[95%] border-b border-[#bfbfbf] mt-1`
 
             const td_time_div_label_3 = document.createElement('label')
             td_time_div_label_3.textContent = " Deferred: " + "00:00:00"
-            td_time_div_label_3.className = `text-sm`
+            td_time_div_label_3.className = `text-sm mt-1`
+
+            const breakdown_div = document.createElement('div')
+            breakdown_div.className = "breakdown-div"
+
+            // try for loop
+            // for(let i = 0; i < 10; i++){
+            //     let breakdown_labels = document.createElement('label')
+            //     breakdown_labels.className = "text-sm w-full border-b border-[#bfbfbf]"
+            // }
+
+            const processed_lbl_bd = document.createElement('label')
+            processed_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            processed_lbl_bd.textContent = "Processed: " + response[i]['final_progressed_timer']
+
+            const approval_lbl_bd = document.createElement('label')
+            approval_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            approval_lbl_bd.textContent = "Approval: " + response[i]['approved_time']
+
+            const deferral_lbl_bd = document.createElement('label')
+            deferral_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            deferral_lbl_bd.textContent = "Deferral: 0000-00-00 00:00:00"
+
+            const cancelled_lbl_bd = document.createElement('label')
+            cancelled_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            cancelled_lbl_bd.textContent = "Cancelled: 0000-00-00 00:00:00"
+
+            const arrived_lbl_bd = document.createElement('label')
+            arrived_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            arrived_lbl_bd.textContent = "Arrived: 0000-00-00 00:00:00"
+
+            const checked_lbl_bd = document.createElement('label')
+            checked_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            checked_lbl_bd.textContent = "Checked: 0000-00-00 00:00:00"
+
+            const admitted_lbl_bd = document.createElement('label')
+            admitted_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            admitted_lbl_bd.textContent = "Admitted: 0000-00-00 00:00:00"
+
+            const discharged_lbl_bd = document.createElement('label')
+            discharged_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            discharged_lbl_bd.textContent = "Discharged: 0000-00-00 00:00:00"
+
+            const follow_lbl_bd = document.createElement('label')
+            follow_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            follow_lbl_bd.textContent = "Follow Up: 0000-00-00 00:00:00"
+
+            const referred_lbl_bd = document.createElement('label')
+            referred_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
+            referred_lbl_bd.textContent = "Referred: 0000-00-00 00:00:00"
 
             if(response[i]['final_progressed_timer'] !== null){
                 // Input time duration in "hh:mm:ss" format
@@ -578,13 +665,28 @@ $(document).ready(function(){
             td_status.appendChild(td_status_div)
             // end
 
+            td_time.appendChild(fa_plus)
             td_time.appendChild(td_time_div_label_1)
+            td_time.appendChild(td_time_div_label_1_1)
             td_time.appendChild(td_time_div_label_2)
             if (data_arr[response[i]['hpercode']].status === 'Deferred'){
                 console.log('asdf')
                 td_time.appendChild(td_time_div_label_3)
             }
+            breakdown_div.appendChild(processed_lbl_bd)
+            breakdown_div.appendChild(approval_lbl_bd)
+            breakdown_div.appendChild(deferral_lbl_bd)
+            breakdown_div.appendChild(cancelled_lbl_bd)
+            breakdown_div.appendChild(arrived_lbl_bd)
+            breakdown_div.appendChild(checked_lbl_bd)   
+            breakdown_div.appendChild(admitted_lbl_bd)
+            breakdown_div.appendChild(discharged_lbl_bd)
+            breakdown_div.appendChild(follow_lbl_bd)
+            breakdown_div.appendChild(referred_lbl_bd)
 
+            td_time.appendChild(breakdown_div)
+            
+            
             td_referr_div.appendChild(td_referr_label_1)
             td_referr_div.appendChild(td_referr_label_2)
 
@@ -612,6 +714,8 @@ $(document).ready(function(){
             //     hpercode_with_timer_running.push({ 'hpercode' : response[i].hpercode})
             // }
         }
+
+        console.log(document.querySelectorAll('.accordion-btn').length)
     }
 
     // MAIN BUTTON FUNCTIONALITIES - START - APPROVED - CLOSED - N
@@ -1099,6 +1203,9 @@ $(document).ready(function(){
                 }else{
                     $.ajax({
                         url: './php/fetch_onProcess.php',
+                        data : {
+                            hpercode : "none"
+                        },
                         method: "POST",
                         success: function(response){               
                             response = JSON.parse(response);
@@ -1209,11 +1316,18 @@ $(document).ready(function(){
                     populateTbody(response)
 
                     const pencil_elements = document.querySelectorAll('.pencil-btn');
-                    pencil_elements.forEach(function(element, index) {
-                    element.addEventListener('click', function() {
-                        console.log('den')
-                        ajax_method(index)
+                        pencil_elements.forEach(function(element, index) {
+                            element.addEventListener('click', function() {
+                                console.log('den')
+                                ajax_method(index)
+                        });
                     });
+
+                    const expand_elements = document.querySelectorAll('.accordion-btn');
+                    expand_elements.forEach(function(element, index) {
+                        element.addEventListener('click', function() {
+                            global_breakdown_index = index;
+                        });
                     });
                 }
             })
@@ -1296,5 +1410,25 @@ $(document).ready(function(){
         event.preventDefault();
         clearInterval(inactivityTimer);
     })
-    
+
+    let toggle_accordion = true
+    $(document).on('click' , '.accordion-btn' , function(event){
+        // console.log(global_breakdown_index)
+        if(prev_clicked_breakdown_index !== global_breakdown_index){
+            toggle_accordion = !toggle_accordion;
+        }
+        prev_clicked_breakdown_index = global_breakdown_index;
+        if(toggle_accordion){
+            document.querySelectorAll('.tr-incoming')[global_breakdown_index].style.height = "300px"
+            document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'block'
+            toggle_accordion = false;
+        }else{
+
+            document.querySelectorAll('.tr-incoming')[global_breakdown_index].style.height = "61px"
+            document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'none'
+
+            toggle_accordion = true;
+        }
+        
+    })
 })

@@ -96,6 +96,15 @@ $(document).ready(function(){
                 // pe_findings_input : "Potassium",
             }
 
+            if($('#type-input').val() === "OB"){
+                data['fetal_heart_inp'] = $('#fetal-heart-inp').val()
+                data['fundal_height_inp'] = $('#fundal-height-inp').val()
+                data['cervical_dilation_inp'] = $('#cervical-dilation-inp').val()
+                data['bag_water_inp'] = $('#bag-water-inp').val()
+                data['presentation_ob_inp'] = $('#presentation-ob-inp').val()
+                data['others_ob_inp'] = $('#others-ob-inp').val()
+            }
+
             for (var key in data) {
                 if (data.hasOwnProperty(key)) {
                     console.log(key + " -> " + data[key] + " -> " + typeof data[key]);
@@ -128,7 +137,7 @@ $(document).ready(function(){
 
                     $('#yes-modal-btn').addClass('hidden')
                     $('#ok-modal-btn').text('OK')
-                    $('#myModal').modal('show');
+                    // $('#myModal').modal('show');
                     
 
                     $('#ok-modal-btn').on('click' , function(event){
@@ -136,8 +145,6 @@ $(document).ready(function(){
                             loadContent('php/default_view.php')
                         }
                     })
-                    
-            
                 }
             })
 
@@ -145,6 +152,3 @@ $(document).ready(function(){
         
     })
 })
-
-
-

@@ -9,7 +9,7 @@ include("dbconn.php");
 include("dbfunc.php");
 
 // Set session-related configurations
-ini_set('session.cookie_lifetime', 0);
+ini_set('session.cookie_lifetime', 0); 
 ini_set('session.cookie_path', '/');
 ini_set('session.cookie_domain', '');
 ini_set('session.cookie_httponly', true);

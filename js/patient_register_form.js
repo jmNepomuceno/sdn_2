@@ -1,7 +1,3 @@
-// document.querySelector('#check-if-registered-btn').addEventListener('mouseover', function(){
-//     console.log("here")
-// })
-
 $(document).ready(function(){
     
     $('#check-if-registered-btn').on('click' , function(event){
@@ -16,7 +12,7 @@ $(document).ready(function(){
             setTimeout(function() {
                 // Your code here
                 // document.querySelector('#check-if-registered-h3').classList.toggle('hidden');
-
+                console.log('here')
                 document.querySelector('#check-if-registered-h3').classList.remove('hidden');
 
 
