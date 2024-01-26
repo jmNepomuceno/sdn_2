@@ -550,6 +550,10 @@ $(document).ready(function(){
         $('#er-patform-btn-id').removeClass('bg-mainColor')
     })
 
+    $('#classification-dropdown').on('click' , function(event){
+        $('#add-clear-btn-div').addClass('mt-10')
+    })
+
 })
 
 
