@@ -189,9 +189,9 @@ const loadContent = (url) => {
 }
 
 // loadContent('php/default_view.php')
-loadContent('php/patient_register_form.php')
+// loadContent('php/patient_register_form.php')
 // loadContent('php/opd_referral_form.php?type=OB&code=BGHMC-0001')
-// loadContent('php/incoming_form.php')
+loadContent('php/incoming_form.php')
 
 $(document).ready(function(){
     $(window).on('load' , function(event){
@@ -277,8 +277,35 @@ $(document).ready(function(){
                 window.location.href = "../php/history_log.php";
             }
         });
+    })
 
-        
+    $('#admin-module-btn').on('click' , function(event){
+        event.preventDefault();
+        // 
+        let currentDate = new Date();
+
+        let year = currentDate.getFullYear();
+        let month = currentDate.getMonth() + 1; // Adding 1 to get the month in the human-readable format
+        let day = currentDate.getDate();
+
+        let hours = currentDate.getHours();
+        let minutes = currentDate.getMinutes();
+        let seconds = currentDate.getSeconds();
+
+        let final_date = year + "/" + month + "/" + day + " " + hours + ":" + minutes + ":" + seconds
+        // console.log('here')
+        $.ajax({
+            url: './php/save_process_time.php',
+            data : {
+                what: 'save',
+                date : final_date,
+                sub_what: 'history_log'
+            },
+            method: "POST",
+            success: function(response) {
+                window.location.href = "../php/admin.php";
+            }
+        });
     })
 
     // NOTIFICATION FUNCTIONS

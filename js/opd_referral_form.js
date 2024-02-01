@@ -32,7 +32,7 @@ $(document).ready(function(){
 
         //     $('#myModal').modal('show');
         // } 
-        if(true) {
+        if(sensitive_selected) {
             const data = {
                 type : $('#type-input').val(),
                 code : $('#code-input').val(),

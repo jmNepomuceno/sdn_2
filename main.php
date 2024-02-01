@@ -173,7 +173,7 @@
         <div id="nav-drop-account-div" class="hidden z-10 absolute right-0 top-[45px] flex flex-col justify-start items-center bg-[#1f292e] text-white fixed w-[15%] h-[400px]">
                 <div class="w-full h-[350px] flex flex-col justify-around items-center">
                     <?php if($_SESSION["user_name"] == "admin") {?>
-                        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+                        <div id="admin-module-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
                             <h2 id="admin-module-id" class="">Admin</h2>
                         </div>
                     <?php } ?>

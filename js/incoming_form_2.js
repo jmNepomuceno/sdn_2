@@ -30,10 +30,17 @@ $(document).ready(function(){
     let global_pat_status = document.querySelectorAll('.pat-status-incoming')
     let global_breakdown_index = 0;
     let prev_clicked_breakdown_index = 0
+    let global_init_referred_lbl = document.querySelectorAll('.referred-time-lbl')
+    let global_reception_lbl = document.querySelectorAll('.reception-time-lbl')
+    let global_queue_lbl = document.querySelectorAll('.queue-time-lbl')
 
     let intervalIDs = {};
     let length_curr_table = document.querySelectorAll('.hpercode').length;
     let add_minutes = 0;
+    let toggle_accordion_obj = {}
+    for(let i = 0; i < length_curr_table; i++){
+        toggle_accordion_obj[i] = true
+    }
     // ---------------------------------------------------------------------------------------------------------
     let inactivityTimer;
     let userIsActive = true;
@@ -74,7 +81,7 @@ $(document).ready(function(){
     document.addEventListener('mousemove', handleUserActivity);
 
     // Set up a timer to check user inactivity periodically
-    const inactivityInterval = 2000; // Execute every 5 seconds (adjust as needed)
+    const inactivityInterval = 42000; // Execute every 5 seconds (adjust as needed)
 
     function startInactivityTimer() {
         inactivityTimer = setInterval(() => {
@@ -155,11 +162,43 @@ $(document).ready(function(){
             }
 
             console.log("roflmao: " + index_pat_status)
+            // getting current date for reception time
+            var currentDate = new Date();
+
+            // Get the current date components
+            var currentYear = currentDate.getFullYear();
+            var currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed
+            var currentDay = currentDate.getDate().toString().padStart(2, '0');
+
+            // Get the current time components
+            var currentHours = currentDate.getHours().toString().padStart(2, '0');
+            var currentMinutes = currentDate.getMinutes().toString().padStart(2, '0');
+            var currentSeconds = currentDate.getSeconds().toString().padStart(2, '0');
+
+            // Format the date and time as a string
+            var formattedDateTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
+
+            //getting the difference between reception time and initial referred time to get the value of queue time
+            const date1 = new Date(global_init_referred_lbl[index_pat_status].textContent);
+            const date2 = new Date(formattedDateTime);
+
+            
+            // Calculate the difference in milliseconds
+            const differenceInMilliseconds = Math.abs(date1 - date2);
+
+            // Convert the difference to hours, minutes, and seconds
+            let hours_bd = Math.floor(differenceInMilliseconds / 3600000);
+            let minutes_bd = Math.floor((differenceInMilliseconds % 3600000) / 60000);
+            let seconds_bd = Math.floor((differenceInMilliseconds % 60000) / 1000);
+
             global_pat_status[index_pat_status].textContent = "On-Process"
+            global_reception_lbl[index_pat_status].textContent  = "Reception: " + formattedDateTime
+            global_queue_lbl[index_pat_status].textContent  = `Queue Time: ${hours_bd}:${minutes_bd}:${seconds_bd}`
             data_arr[global_single_hpercode].status = "On-Process"
+
         }
     }
-
+        
     const pencil_elements = document.querySelectorAll('.pencil-btn');
     pencil_elements.forEach(function(element, index) {
         element.addEventListener('click', function() {
@@ -167,14 +206,6 @@ $(document).ready(function(){
             ajax_method(index)
         });
     });
-
-    // const expand_elements = document.querySelectorAll('.accordion-btn');
-    // pencil_elements.forEach(function(element, index) {
-    //     element.addEventListener('click', function() {
-    //         console.log('den')
-    //         ajax_method(index)
-    //     });
-    // });
 
     //end - open modal 
 
@@ -420,7 +451,9 @@ $(document).ready(function(){
         // need to update the laman of all global variables on every populate of tbody.
         // update the global_hpercode_all based on the current laman of the table
         length_curr_table = response.length
-
+        for(let i = 0; i < length_curr_table; i++){
+            toggle_accordion_obj[i] = true
+        }
         const incoming_tbody = document.querySelector('#incoming-tbody')
         // console.log(incoming_tbody.hasChildNodes())
         while (incoming_tbody.hasChildNodes()) {
@@ -459,7 +492,7 @@ $(document).ready(function(){
 
             const td_name = document.createElement('td')
             td_name.textContent = response[i]['reference_num'] + " - " + index
-            td_name.className = 'text-xs'
+            td_name.className = 'text-sm'
             const td_reference_num = document.createElement('td')
             td_reference_num.textContent = response[i]['patlast'] + ", " + response[i]['patfirst'] + " " + response[i]['patmiddle']
 
@@ -494,27 +527,42 @@ $(document).ready(function(){
             td_time_div_label_1.textContent = " Referred: " + response[i]['date_time']
             td_time_div_label_1.className = `text-sm w-[95%] border-b border-[#bfbfbf] mt-1`
 
-            //calculate the difference between initial Referred to Reception time
-            const date1 = new Date(response[i]['date_time']);
-            const date2 = new Date(response[i]['reception_time']);
+            let hours_bd = ""
+            let minutes_bd = ""
+            let seconds_bd = ""
 
-            // Calculate the difference in milliseconds
-            const differenceInMilliseconds = Math.abs(date1 - date2);
+            if(response[i]['reception_time'] !== null){
+                //calculate the difference between initial Referred to Reception time
+                const date1 = new Date(response[i]['date_time']);
+                const date2 = new Date(response[i]['reception_time']);
 
-            // Convert the difference to hours, minutes, and seconds
-            const hours_bd = Math.floor(differenceInMilliseconds / 3600000);
-            const minutes_bd = Math.floor((differenceInMilliseconds % 3600000) / 60000);
-            const seconds_bd = Math.floor((differenceInMilliseconds % 60000) / 1000);
+                
+                // Calculate the difference in milliseconds
+                const differenceInMilliseconds = Math.abs(date1 - date2);
+                
+                // Convert the difference to hours, minutes, and seconds
+                hours_bd = Math.floor(differenceInMilliseconds / 3600000);
+                minutes_bd = Math.floor((differenceInMilliseconds % 3600000) / 60000);
+                seconds_bd = Math.floor((differenceInMilliseconds % 60000) / 1000);
 
-            // console.log(`Difference: ${hours}:${minutes}:${seconds}`);
+                if(seconds_bd < 10){
+                    seconds_bd = seconds_bd.toString()
+                    seconds_bd = "0" + seconds_bd;
+                }
+                if(minutes_bd < 10){
+                    minutes_bd = minutes_bd.toString()
+                    minutes_bd = "0" + minutes_bd;
+                }
+            }
+
+            console.log(`Difference: ${hours_bd}:${minutes_bd}:${seconds_bd}`);
 
             const td_time_div_label_1_1 = document.createElement('label')
-            td_time_div_label_1_1.textContent = `Waiting: ${hours_bd}:${minutes_bd}:${seconds_bd}`
+            td_time_div_label_1_1.textContent = (response[i]['reception_time'] !== "") ? `Queue Time: ${hours_bd}:${minutes_bd}:${seconds_bd}` : 'Queue Time: 00:00:00'
             td_time_div_label_1_1.className = `text-sm w-[95%] border-b border-[#bfbfbf] mt-1`
 
             const td_time_div_label_2 = document.createElement('label')
             // td_time_div_label_2.textContent = (response[i]['status'] !== 'Pending') ?  "Processed: " + response[i]['approved_time'] : " Reception: 00:00:00"
-            console.log(response)
             td_time_div_label_2.textContent = (response[i]['status'] !== 'Pending') ?  "Reception: " + response[i]['reception_time'] : " Reception: 00:00:00"
             td_time_div_label_2.className = `text-sm w-[95%] border-b border-[#bfbfbf] mt-1`
 
@@ -533,7 +581,7 @@ $(document).ready(function(){
 
             const processed_lbl_bd = document.createElement('label')
             processed_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
-            processed_lbl_bd.textContent = "Processed: " + response[i]['final_progressed_timer']
+            processed_lbl_bd.textContent = "Processed: " + (response[i]['final_progressed_timer'])
 
             const approval_lbl_bd = document.createElement('label')
             approval_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
@@ -568,8 +616,8 @@ $(document).ready(function(){
             follow_lbl_bd.textContent = "Follow Up: 0000-00-00 00:00:00"
 
             const referred_lbl_bd = document.createElement('label')
-            referred_lbl_bd.className = "text-sm w-full border-b border-[#bfbfbf] mt-1"
-            referred_lbl_bd.textContent = "Referred: 0000-00-00 00:00:00"
+            referred_lbl_bd.className = "text-xs w-full border-b border-[#bfbfbf] mt-1"
+            referred_lbl_bd.textContent = "Referred Back: 0000-00-00 00:00:00"
 
             if(response[i]['final_progressed_timer'] !== null){
                 // Input time duration in "hh:mm:ss" format
@@ -828,9 +876,22 @@ $(document).ready(function(){
                     // $('#pendingModal').addClass('hidden')
                     global_stopwatch_all = []
                     global_hpercode_all = []
+
                     populateTbody(response)
+
+                    console.log(document.querySelectorAll('.pencil-btn').length)
+                    const pencil_elements = document.querySelectorAll('.pencil-btn');
+                    pencil_elements.forEach(function(element, index) {
+                        element.addEventListener('click', function() {
+                            console.log('den')
+                            ajax_method(index)
+                        });
+                    });
                 }
              })
+
+
+            
         }
 
         else if(modal_filter === 'arrival_confirmation'){
@@ -1411,24 +1472,17 @@ $(document).ready(function(){
         clearInterval(inactivityTimer);
     })
 
-    let toggle_accordion = true
+    
     $(document).on('click' , '.accordion-btn' , function(event){
-        // console.log(global_breakdown_index)
-        if(prev_clicked_breakdown_index !== global_breakdown_index){
-            toggle_accordion = !toggle_accordion;
-        }
-        prev_clicked_breakdown_index = global_breakdown_index;
-        if(toggle_accordion){
+        console.log(toggle_accordion_obj)
+        if(toggle_accordion_obj[global_breakdown_index]){
             document.querySelectorAll('.tr-incoming')[global_breakdown_index].style.height = "300px"
-            document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'block'
-            toggle_accordion = false;
+            // document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'block'
+            toggle_accordion_obj[global_breakdown_index] = false
         }else{
-
             document.querySelectorAll('.tr-incoming')[global_breakdown_index].style.height = "61px"
-            document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'none'
-
-            toggle_accordion = true;
+            // document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'none'
+            toggle_accordion_obj[global_breakdown_index] = true
         }
-        
     })
 })

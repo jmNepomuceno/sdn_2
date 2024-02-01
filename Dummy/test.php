@@ -1,43 +1,35 @@
+<?php 
+    session_start();
+    include('../database/connection2.php');
+    // fetch sdn hospitals and sdn users
+    $sql = "SELECT * FROM sdn_hospital";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $data_sdn_hospitals = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // echo '<pre>'; print_r($data_sdn_hospitals); echo '</pre>';
+
+    $sql = "SELECT * FROM sdn_users";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $data_sdn_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // echo '<pre>'; print_r($data_sdn_users); echo '</pre>';
+
+    $sql = "SELECT hospital_code FROM sdn_users WHERE user_count=2";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $data_sdn_users_count2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo '<pre>'; print_r($data_sdn_users_count2); echo '</pre>';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    .resizable-div {
-      height: 60px; /* Initial height */
-      background-color: #f0f0f0;
-      overflow: hidden; /* Hide content that exceeds the height */
-      transition: height 0.3s ease; /* Smooth transition for the height property */
-      display: none; /* Initially hide the content */
-    }
-
-    .resizable-div.expanded {
-      height: 200px; /* New height when expanded */
-      display: block; /* Show the content when expanded */
-    }
-
-    /* Optional: Style for better visibility */
-    .content {
-      padding: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-
-  <div class="resizable-div" onclick="toggleHeight()">
-    <div class="content">
-      <!-- Your content goes here -->
-      Click to toggle height
-    </div>
-  </div>
-
-  <script>
-    function toggleHeight() {
-      const resizableDiv = document.querySelector('.resizable-div');
-      resizableDiv.classList.toggle('expanded');
-    }
-  </script>
-
+    
 </body>
 </html>

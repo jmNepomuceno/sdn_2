@@ -660,27 +660,81 @@ $(document).ready(function(){
     window.location.href = "../main.php";
   })
 
-  // $.ajax({
-  //   url: '../php/fetch_interval.php',
-  //   method: "POST",
-  //   data: { /* your data here */ },
-  //   success: function (data) {
-  //       // Log data to the server
-  //       var logData = {
-  //           action: 'fetch_interval',
-  //           requestData: { /* your request data here */ },
-  //           responseData: data,
-  //           timestamp: new Date()
-  //       };
+  // Get the timer element
+  let recep_time = document.getElementById('average-reception-id').textContent
+  let approve_time = document.getElementById('average-approve-id').textContent
+  let total_time = document.getElementById('average-total-id').textContent
+  let fastest_time = document.getElementById('fastest-id').textContent
+  let slowest_time = document.getElementById('slowest-id').textContent
 
-  //       logDataToServer(logData);
+  // Get the initial time in seconds
+  var initialTime = getTimeInSeconds('00:00:01');
 
-  //       // Your existing success callback logic here
-  //       // ...
-  //   }
-  // });  
+  // Set the initial time
+  setTimer(initialTime);
+
+  // Start the timer
+  setInterval(function() {
+      // Increment the time by 1 second
+      initialTime++;
+
+      // Update the timer display
+      setTimer(initialTime , "reception");
+      setTimer(initialTime , "approve");
+      setTimer(initialTime , "total");
+      setTimer(initialTime , "fastest");
+      setTimer(initialTime , "slowest");
+  }, 5);
+
+  // Function to convert HH:MM:SS format to seconds
+  function getTimeInSeconds(timeString) {
+      var timeArray = timeString.split(':');
+      return parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]);
+  }
+
+  // Function to set the timer display
+  function setTimer(seconds, elem) {
+      // let real_time = getTimeInSeconds('00:01:38')
+      let real_time;  
+      // = getTimeInSeconds('00:05:31')
+      switch(elem){
+        case 'reception': real_time = getTimeInSeconds(recep_time); break;
+        case 'approve': real_time = getTimeInSeconds(approve_time); break; 
+        case 'total': real_time = getTimeInSeconds(total_time); break;
+        case 'fastest': real_time = getTimeInSeconds(fastest_time); break;
+        case 'slowest': real_time = getTimeInSeconds(slowest_time); break;
+      }
+
+
+      if(real_time >= seconds){
+        var hours = Math.floor(seconds / 3600);
+        var minutes = Math.floor((seconds % 3600) / 60);
+        var remainingSeconds = seconds % 60;
+
+        // Format the time as HH:MM:SS
+        var formattedTime = pad(hours) + ':' + pad(minutes) + ':' + pad(remainingSeconds);
+        
+        // Update the timer element content
+        // document.getElementById('average-reception-id').textContent = formattedTime;
+        switch(elem){
+          case 'reception': document.getElementById('average-reception-id').textContent = formattedTime;; break;
+          case 'approve':document.getElementById('average-approve-id').textContent = formattedTime;; break;
+          case 'total': document.getElementById('average-total-id').textContent = formattedTime; break;
+          case 'fastest': document.getElementById('fastest-id').textContent = formattedTime;; break;
+          case 'slowest': document.getElementById('slowest-id').textContent = formattedTime;; break;
+        }
+      }else{
+        clearInterval()
+      }
+
+  }
+
+  // Function to pad single-digit numbers with a leading zero
+  function pad(number) {
+      return (number < 10) ? '0' + number : number;
+  }
+
   
-  // Function to log data to the server
 })
 
 

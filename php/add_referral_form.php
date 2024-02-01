@@ -62,6 +62,7 @@
    // R3-BTN-LIMAY-FCSH-2023-12-06
    if($data_municipality_desc['municipality_description'] === "CITY OF BALANGA (Capital)"){
         $data_municipality_desc['municipality_description'] = "BALANGA";
+        $abbreviation = "BGHMC";
    }
     $reference_num = 'R3-BTN-'. $data_municipality_desc['municipality_description'] . '-' . $abbreviation . '-' . $year . '-' . $month . '-' . $day;
     $patlast = $data['patlast'];

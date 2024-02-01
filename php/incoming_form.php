@@ -259,7 +259,11 @@
                                         $waiting_time_bd .= sprintf('%02d:%02d:%02d', $waiting_time->h, $waiting_time->i, $waiting_time->s);
 
                                     }else{
-                                        $waiting_time_bd = "asdf";
+                                        $waiting_time_bd = "00:00:00";
+                                    }
+
+                                    if($row['reception_time'] == ""){
+                                        $row['reception_time'] = "00:00:00";
                                     }
 
                                     echo '<tr class="tr-incoming '. $style_tr .' ">
@@ -276,12 +280,12 @@
                                             <td class="flex flex-col justify-center items-left relative"> 
                                                 <i class="absolute bottom-0 right-0 accordion-btn fa-solid fa-plus border-2 border-[#a4b7c1] p-1 text-xs rounded bg-[#d1dbe0] opacity-40 cursor-pointer hover:opacity-100"></i>
 
-                                                <label class="text-sm w-[95%] border-b border-[#bfbfbf]"> Referred: ' . $row['date_time'] . ' </label>
-                                                <label class="text-sm w-[95%] border-b border-[#bfbfbf] mt-1"> Waiting: ' . $waiting_time_bd . ' </label>
-                                                <label class="text-sm w-[95%] border-b border-[#bfbfbf] mt-1"> Reception: '. $row['reception_time'] .'</label>
+                                                <label class="referred-time-lbl text-sm w-[95%] border-b border-[#bfbfbf]"> Referred: ' . $row['date_time'] . ' </label>
+                                                <label class="queue-time-lbl text-sm w-[95%] border-b border-[#bfbfbf] mt-1"> Queue Time: ' . $waiting_time_bd . ' </label>
+                                                <label class="reception-time-lbl text-sm w-[95%] border-b border-[#bfbfbf] mt-1"> Reception: '. $row['reception_time'] .'</label>
                                                 
                                                 <div class="breakdown-div">
-                                                    <label class="text-sm w-full border-b border-[#bfbfbf] mt-1"> Processed: 00:00:00  </label>  
+                                                    <label class="processed-time-lbl text-sm w-full border-b border-[#bfbfbf] mt-1"> Processed: 00:00:00  </label>  
                                                     <label class="text-sm w-full border-b border-[#bfbfbf] mt-1"> Approval: 0000-00-00 00:00:00  </label>  
                                                     <label class="text-sm w-full border-b border-[#bfbfbf] mt-1"> Deferral: 0000-00-00 00:00:00  </label>  
                                                     <label class="text-sm w-full border-b border-[#bfbfbf] mt-1"> Cancelled: 0000-00-00 00:00:00  </label>  
