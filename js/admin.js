@@ -212,7 +212,8 @@ $(document).ready(function(){
       $.ajax({
           url: '../php/add_classification.php',
           data : {  
-              classification : $('#add-classification-input').val()
+              classification : $('#add-classification-input').val(),
+              what : 'add'
           },
           method: "POST",
           success: function(response) {
@@ -231,27 +232,48 @@ $(document).ready(function(){
 
   let toggle_accordion_obj = {}
   let global_breakdown_index = 0
+  let global_classification_divs_index = 0;
+  let single_classification_clicked = ""
   for(let i = 0; i < document.querySelectorAll('.table-tr').length; i++){
       toggle_accordion_obj[i] = true
   }
-  console.log(toggle_accordion_obj)
+  // console.log(toggle_accordion_obj)
 
-  const expand_elements = document.querySelectorAll('.see-more-btn');
-  expand_elements.forEach(function(element, index) {
-      element.addEventListener('click', function() {
-          global_breakdown_index = index;
-      });
-  });
+  function attachSeeMoreBtn() {
+    const expand_elements = document.querySelectorAll('.see-more-btn');
+    expand_elements.forEach(function(element, index) {
+        element.addEventListener('click', function() {
+            global_breakdown_index = index;
+        });
+    });
+  }
 
-  const edit_info_elements = document.querySelectorAll('.edit-info-btn');
-  edit_info_elements.forEach(function(element, index) {
-      element.addEventListener('click', function() {
-          global_breakdown_index = index;
-      });
-  });
+  function attachInfoBtn() {
+    const edit_info_elements = document.querySelectorAll('.edit-info-btn');
+      edit_info_elements.forEach(function(element, index) {
+        element.addEventListener('click', function() {
+            global_breakdown_index = index;
+        });
+    });
+  }
 
-  $('.see-more-btn').on('click' , function(event){
-    console.log(document.querySelectorAll('.number_users')[global_breakdown_index])
+  function attachClassifications() {
+    const classification_div_elements = document.querySelectorAll('.classification-sub-div');
+      classification_div_elements.forEach(function(element, index) {
+        element.addEventListener('click', function() {
+          global_classification_divs_index = index;
+        });
+    });
+  }
+
+  attachClassifications()
+  attachSeeMoreBtn();
+  attachInfoBtn();
+
+  $(document).on('click', '.see-more-btn', function(event){
+    // console.log(document.querySelectorAll('.number_users')[global_breakdown_index])
+    console.log(global_breakdown_index)
+    
       if(toggle_accordion_obj[global_breakdown_index]){
           document.querySelectorAll('.table-tr')[global_breakdown_index].style.height = "350px"
           document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'flex'
@@ -263,21 +285,243 @@ $(document).ready(function(){
           document.querySelectorAll('.number_users')[global_breakdown_index].style.display = 'flex'
           toggle_accordion_obj[global_breakdown_index] = true
       }
+
+      if($('.see-more-btn').eq(global_breakdown_index).hasClass('fa-square-caret-down')){
+        console.log('asdf')
+        $('.see-more-btn').eq(global_breakdown_index).removeClass('fa-square-caret-down')
+        $('.see-more-btn').eq(global_breakdown_index).addClass('fa-square-caret-up')
+      }else{
+        console.log('fdsa')
+        $('.see-more-btn').eq(global_breakdown_index).addClass('fa-square-caret-down')
+        $('.see-more-btn').eq(global_breakdown_index).removeClass('fa-square-caret-up')
+      }
+      
   })
 
   
-  $('.edit-info-btn').on('click' , function(event){
-    console.log('global_breakdown_index: ' + global_breakdown_index + " ------  ")
-    console.log($('.edit-users-info').eq(global_breakdown_index + 4).val());
+  let prev_info_arr = []
+  $(document).on('click', '.edit-info-btn', function(event){
+    console.log('here')
+    if($('.edit-info-btn').eq(global_breakdown_index).text() === 'Edit'){
+      prev_info_arr = []
+      for(let i = global_breakdown_index * 5; i <= (global_breakdown_index * 5) + 4; i++){
+        prev_info_arr.push( $('.edit-users-info').eq(i).val())
+        $('.edit-users-info').eq(i).removeClass('pointer-events-none')
+        $('.edit-users-info').eq(i).addClass('border-b border-[#198754]')
+      }
+
+      $('.cancel-info-btn').eq(global_breakdown_index).removeClass('hidden')
+      $('.edit-info-btn').eq(global_breakdown_index).text('Save')
+      $('.edit-info-btn').eq(global_breakdown_index).removeClass('bg-[#0d6efd]')
+      $('.edit-info-btn').eq(global_breakdown_index).addClass('bg-[#198754]')
+  
+      for(let i = 0; i < $('.edit-info-btn').length; i++){
+        if(i !== global_breakdown_index){
+          $('.edit-info-btn').eq(i).addClass('pointer-events-none')
+          $('.edit-info-btn').eq(i).addClass('opacity-30')
+        }
+      }
+    }else if($('.edit-info-btn').eq(global_breakdown_index).text() === 'Save'){
+      let temp = [];
+      for(let i = global_breakdown_index * 5; i <= (global_breakdown_index * 5) + 4; i++){
+        temp.push( $('.edit-users-info').eq(i).val())
+      }
+
+      const data = {
+        prev_last_name : prev_info_arr[0],
+        prev_first_name : prev_info_arr[1],
+        prev_middle_name : prev_info_arr[2],
+        prev_username : prev_info_arr[3],
+        prev_password : prev_info_arr[4],
+
+        last_name : temp[0],
+        first_name : temp[1],
+        middle_name : temp[2],
+        username : temp[3],
+        password : temp[4],
+        hospital_code : $('.hcode-edit-info').eq(global_breakdown_index).val()
+      }
+
+      console.log(data)
+      
+      $.ajax({
+        url: '../php/edit_user_acc.php',
+        method: "POST",
+        data : data,
+        success: function(response) {
+            console.log(response)
+            $('#myModal-prompt').modal('show');
+
+            // set the input fields to unclickable
+            for(let i = 0; i <= (global_breakdown_index * 5) + 4; i++){
+              $('.edit-users-info').eq(i).addClass('pointer-events-none')
+              $('.edit-users-info').eq(i).removeClass('border-b border-[#198754]')
+            }
+
+            $('.cancel-info-btn').eq(global_breakdown_index).addClass('hidden')
+            $('.edit-info-btn').eq(global_breakdown_index).addClass('bg-[#0d6efd]')
+            $('.edit-info-btn').eq(global_breakdown_index).removeClass('bg-[#198754]')
+            $('.edit-info-btn').eq(global_breakdown_index).text('Edit')
+
+            for(let i = 0; i < $('.edit-info-btn').length; i++){
+              $('.edit-info-btn').eq(i).removeClass('pointer-events-none')
+              $('.edit-info-btn').eq(i).removeClass('opacity-30')
+            }
+
+            $('#myModal-hospitalAndUsers').modal('hide');
+          }
+      });
+    }
   })
 
-  $('#myModal-hospitalAndUsers').modal('show');
+  // sort-up-btn
+  $('.sort-up-btn').on('click' , function(event){
+    let index = parseInt(event.target.id.match(/\d+/)[0]);
+
+    $('.sort-up-btn').eq(index).removeClass('opacity-30')
+    $('.sort-up-btn').eq(index).removeClass('hover:opacity-100')
+    $('.sort-up-btn').eq(index).addClass('opacity-100')
+
+    $('.sort-down-btn').eq(index).addClass('opacity-30')
+    $('.sort-down-btn').eq(index).addClass('hover:opacity-100')
+    $('.sort-down-btn').eq(index).removeClass('opacity-100')
+
+    var div = document.querySelector(".table-body");
+    while (div.firstChild) {
+        div.removeChild(div.firstChild);
+    }
+
+    let temp = ""
+    switch(event.target.id){
+      case "sort-up-btn-id-0": temp = "hospital_name_ASC"; break;
+      case "sort-up-btn-id-1": temp = "hospital_code_ASC"; break;
+      case "sort-up-btn-id-2": temp = "hospital_isVerified_ASC"; break;
+    }
+
+    console.log(temp)
+
+    $.ajax({
+      url: '../php/fetch_admin_search_table.php',
+      method: "POST",
+      data : {
+        temp : temp
+      },
+      success: function(response) {
+          // console.log(response)
+          div.innerHTML += response
+          attachSeeMoreBtn();
+          attachInfoBtn();
+        }
+    });
+  })
+
+  $('.sort-down-btn').on('click' , function(event){
+    let index = parseInt(event.target.id.match(/\d+/)[0]);
+
+    $('.sort-down-btn').eq(index).removeClass('opacity-30')
+    $('.sort-down-btn').eq(index).removeClass('hover:opacity-100')
+    $('.sort-down-btn').eq(index).addClass('opacity-100')
+
+    $('.sort-up-btn').eq(index).addClass('opacity-30')
+    $('.sort-up-btn').eq(index).addClass('hover:opacity-100')
+    $('.sort-up-btn').eq(index).removeClass('opacity-100')
+
+    var div = document.querySelector(".table-body");
+    while (div.firstChild) {
+        div.removeChild(div.firstChild);
+    }
+
+    let temp = ""
+    switch(event.target.id){
+      case "sort-down-btn-id-0": temp = "hospital_name_DESC"; break;
+      case "sort-down-btn-id-1": temp = "hospital_code_DESC"; break;
+      case "sort-down-btn-id-2": temp = "hospital_isVerified_DESC"; break;
+    }
+    console.log(temp)
+    $.ajax({
+      url: '../php/fetch_admin_search_table.php',
+      method: "POST",
+      data : {
+        temp : temp
+      },
+      success: function(response) {
+          // console.log(response)
+          div.innerHTML += response
+          attachSeeMoreBtn();
+          attachInfoBtn();
+        }
+    });
+  })
+
+
+  $('#myModal-add-classification').modal('show');
+
+  $(document).on('click', '.cancel-info-btn', function(event){
+    // set the input fields to unclickable
+    for(let i = 0; i <= (global_breakdown_index * 5) + 4; i++){
+      $('.edit-users-info').eq(i).addClass('pointer-events-none')
+      $('.edit-users-info').eq(i).removeClass('border-b border-[#198754]')
+    }
+
+    $('.cancel-info-btn').eq(global_breakdown_index).addClass('hidden')
+    $('.edit-info-btn').eq(global_breakdown_index).addClass('bg-[#0d6efd]')
+    $('.edit-info-btn').eq(global_breakdown_index).removeClass('bg-[#198754]')
+    $('.edit-info-btn').eq(global_breakdown_index).text('Edit')
+
+    console.log(prev_info_arr)
+    let j = 0;
+    for(let i = global_breakdown_index * 5; i <= (global_breakdown_index * 5) + 4; i++){
+      $('.edit-users-info').eq(i).val(prev_info_arr[j])
+      j += 1
+    }
+
+    for(let i = 0; i < $('.edit-info-btn').length; i++){
+      $('.edit-info-btn').eq(i).removeClass('pointer-events-none')
+      $('.edit-info-btn').eq(i).removeClass('opacity-30')
+    }
+  })
+
+  $(document).on('click', '.classification-sub-div', function(event){
+    // set the input fields to unclickabl
+    $('#delete-classification-btn').removeClass('opacity-50 pointer-events-none')
+    single_classification_clicked = $('.classification-sub-div').eq(global_classification_divs_index).text()
+    // $.ajax({
+    //   url: '../php/add_classification.php',
+    //   method: "POST",
+    //   data : {
+    //     classification : $('.classification-sub-div').eq(global_classification_divs_index).text(),
+    //     what : 'delete'
+    //   },
+    //   success: function(response) {
+    //       // console.log(response)
+    //       div.innerHTML += response
+    //       attachSeeMoreBtn();
+    //       attachInfoBtn();
+    //     }
+    // });
+  })
+
+  $(document).on('click', '#delete-classification-btn', function(event){
+    console.log('here')
+    $.ajax({
+      url: '../php/add_classification.php',
+      method: "POST",
+      data : {
+        classification : single_classification_clicked,
+        what : 'delete'
+      },
+      success: function(response) {
+          console.log(response)
+          // response = JSON.parse(response); 
+          // console.log(response)
+          // $('#add-classification-icon').removeClass('hidden')
+          // $('#add-classification-input').addClass('hidden')
+        }
+    });
+  })
 
 })
-
-
-
-
+  
 
 
 
@@ -317,3 +561,5 @@ inputField.addEventListener('input', function(event) {
       inputField.style.width = inputField.scrollWidth + 'px';
     }
 });
+
+// di nag babago yung edit ng name sa database

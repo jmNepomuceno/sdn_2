@@ -73,9 +73,9 @@
                             </button>
                         </div>
                         <div class="w-full h-[40px] flex flex-row justify-center items-center text-white ">
-                            <input type="radio" name="sensitive" class="" value="true"> 
+                            <input type="radio" name="sensitive_case" class="" value="true"> 
                             <label class="mb-[0.3%] ml-[0.2%]">Yes</label>
-                            <input type="radio" name= "sensitive" class="ml-[5%]" value="false">
+                            <input type="radio" name= "sensitive_case" class="ml-[5%]" value="false">
                             <label class="mb-[0.3%] ml-[0.2%]">No</label>
                         </div>
                     </div>

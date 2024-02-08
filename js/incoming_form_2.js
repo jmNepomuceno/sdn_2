@@ -362,10 +362,10 @@ $(document).ready(function(){
         //     $('#discharged-form').removeClass('hidden')
         // }
 
-
+        console.log(response)
         $('#pendingModal').removeClass('hidden')
         $('#refer-agency').text(" " + response[0].referred_by)
-        $('#refer-reason').text(" " + response[0].reason_referral)
+        $('#refer-reason').text(" " + response[0].reason)
         $('#pending-type-lbl').text(response[0].type)
         $('#pending-name').text(" " + response[0].patlast + ", " + response[0].patfirst + " " + response[0].patmiddle)
         $('#pending-bday').text(" " + response[1].patbdate)
@@ -1477,11 +1477,11 @@ $(document).ready(function(){
         console.log(toggle_accordion_obj)
         if(toggle_accordion_obj[global_breakdown_index]){
             document.querySelectorAll('.tr-incoming')[global_breakdown_index].style.height = "300px"
-            // document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'block'
+            document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'block'
             toggle_accordion_obj[global_breakdown_index] = false
         }else{
             document.querySelectorAll('.tr-incoming')[global_breakdown_index].style.height = "61px"
-            // document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'none'
+            document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'none'
             toggle_accordion_obj[global_breakdown_index] = true
         }
     })

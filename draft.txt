@@ -480,3 +480,32 @@ for($k = 0; $k < count($data_sdn_users); $k++){
                                                             <td class="border-r border-[#b3b3b3]">********</td>
                                                             <td class="border-r border-[#b3b3b3]">No</td>
                                                         </tr> -->
+
+
+
+$(document).ready(function () {
+      $('.clickable-div').click(function () {
+        var index = $('.clickable-div').index(this);
+        console.log('Clicked on div with index:', index);
+        // Perform actions based on the index
+      });
+    });
+
+
+
+$.ajax({
+        url: '../php/edit_user_acc.php',
+        method: "POST",
+        data : data,
+        success: function(response) {
+            console.log(response)
+            
+
+            $('#myModal-hospitalAndUsers').modal('close');
+          }
+      });
+
+
+
+// di na dapat ma pipindot yung refer button kapag already referred na
+// error kapag may same na username

@@ -124,20 +124,20 @@
                     <!-- FUNCTION BUTTONS -->
                     <div class="patient-form-btns w-full mt-3 h-full flex flex-col justify-start items-center">       
                         <div class="w-full h-auto flex flex-row justify-center items-start mt-3">
-                            <select id="classification-dropdown" class="hidden bg-[#526c7a] w-full text-white font-bold py-2 px-4 rounded outline-none cursor-pointer text-xl">
+                            <!-- <select id="classification-dropdown" class="hidden bg-[#526c7a] w-full text-white font-bold py-2 px-4 rounded outline-none cursor-pointer text-xl">
                                 <option value="">Classification</option>
                                 <option class="cursor-pointer" value="er">ER</option>
                                 <option class="cursor-pointer" value="ob">OB</option>
                                 <option class="cursor-pointer" value="opd">OPD</option>
                                 <option class="cursor-pointer" value="pcr">PCR</option>
-                            </select>
+                            </select> -->
                             <!-- classification_arr -->
-                            <!-- <select id="classification-dropdown" class="bg-[#526c7a] w-full text-white font-bold py-2 px-4 rounded outline-none cursor-pointer text-xl">
+                            <select id="classification-dropdown" class="hidden bg-[#526c7a] w-full text-white font-bold py-2 px-4 rounded outline-none cursor-pointer text-xl">
                                 <option value="">Classification</option>
                                 <?php for($i = 0; $i < count($classification_arr); $i++){ ?>
                                     <option class="cursor-pointer" value=<?php echo strtolower($classification_arr[$i]) ?>><?php echo $classification_arr[$i] ?></option>
                                 <?php }?>
-                            </select> -->
+                            </select>
                         </div>
 
                         <div id="add-clear-btn-div" class="w-full flex flex-row justify-evenly items-center">
