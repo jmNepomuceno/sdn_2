@@ -1,20 +1,38 @@
 $(document).ready(function(){
-    // import userIsActive from "./fetch_interval";
-    // console.log(userIsActive)
-    // $.ajax({
-    //     url: '../php/fetch_onProcess.php',
-    //     method: 'POST',
-    //     success: function(response) {
-    //         // $('#dynamic-content').html(response);
-    //         response = JSON.parse(response);    
-    //         loadContent('php/incoming_form.php')
-    //     },
-    //     error: function() {
-    //         console.error('Error loading content');
-    //     }
-    // });
+    const loadContent = (url) => {
+        $.ajax({
+            url:url,
+            success: function(response){
+                // console.log(response)
+                $('#container').html(response);
+            }
+        })
+    }
+
+    // Function to parse query parameters from URL
+    function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        return null;
+    }
+
+    // Check if the loadContent parameter exists in the URL
+    var loadContentParam = getQueryVariable('loadContent');
+    if (loadContentParam) {
+        loadContent(loadContentParam);
+    }else{
+        loadContent('php/default_view.php');
+    }
+
     jQuery.noConflict();
     let current_page = ""
+    let fetch_timer = 0
 
     const playAudio = () =>{
         let audio = document.getElementById("notif-sound")
@@ -38,19 +56,68 @@ $(document).ready(function(){
             data : {
                 from_where : 'bell'
             },
-            success: function(data) {
-                // console.log(data);
-                $('#notif-span').text(data);
-                if (parseInt(data) >= 1) {
+            success: function(response) {
+                response = JSON.parse(response);  
+                // console.log(response);
+                // console.log('pot')
+
+                $('#notif-span').text(response.length);
+                if (parseInt(response.length) >= 1) {
+                    if(current_page === 'incoming_page'){
+                        stopSound()
+                    }else{
+                        playAudio();
+                    }
+                    timer_running = true;
                     $('#notif-circle').removeClass('hidden');
                     
-                    playAudio();
+                    // populate notif-sub-div
+                    // document.querySelector('.notif-sub-div').innerHTML = 
+
+                    let type_counter = []
+                    for(let i = 0; i < response.length; i++){
+
+                        if(!type_counter.includes(response[i]['type'])){
+                            type_counter.push(response[i]['type'])
+                        }
+                    }
+
+                    // console.log(type_counter)
+                    
+                    document.getElementById('notif-sub-div').innerHTML = '';
+                    for(let i = 0; i < type_counter.length; i++){
+                        let type_var  = type_counter[i]
+                        let type_counts  = 0
+
+                        for(let j = 0; j < response.length; j++){
+                            if(type_counter[i] ===  response[j]['type']){
+                                type_counts += 1
+                            }
+                        }
+
+                        if(i % 2 === 0){
+                            document.getElementById('notif-sub-div').innerHTML += '\
+                            <div class="h-[30px] w-[90%] border border-black flex flex-row justify-evenly items-center mt-1 bg-transparent text-white opacity-30 hover:opacity-100">\
+                            <h4 class="font-bold text-lg">' + type_counts + '</h4>\
+                                <h4 class="font-bold text-lg">' + type_var + '</h4>\
+                            </div>\
+                        ';
+                        }else{
+                            document.getElementById('notif-sub-div').innerHTML += '\
+                            <div class="h-[30px] w-[90%] border border-black flex flex-row justify-evenly items-center mt-1 bg-white opacity-30 hover:opacity-100">\
+                            <h4 class="font-bold text-lg">' + type_counts + '</h4>\
+                                <h4 class="font-bold text-lg">' + type_var + '</h4>\
+                            </div>\
+                        ';
+                        }
+                    }
+
                 } else {
                     $('#notif-circle').addClass('hidden');
                     stopSound()
                 }
                 
-                setTimeout(fetchMySQLData, 5000);
+                fetch_timer = setTimeout(fetchMySQLData, 500);
             }
         });
     }   
@@ -174,31 +241,28 @@ $(document).ready(function(){
         document.querySelector('#nav-drop-account-div').classList.toggle('hidden');
 
     })
-})
+
+    // const loadContent = (url) => {
+    //     $.ajax({
+    //         url:url,
+    //         success: function(response){
+    //             // console.log(response)
+    //             $('#container').html(response);
+    //         }
+    //     })
+    // }
+
+    // loadContent('php/default_view.php')
+    // loadContent('php/patient_register_form.php')
+    // loadContent('php/opd_referral_form.php?type=OB&code=BGHMC-0001')
+    // loadContent('php/incoming_form.php')
 
 
-
-const loadContent = (url) => {
-    $.ajax({
-        url:url,
-        success: function(response){
-            // console.log(response)
-            $('#container').html(response);
-        }
-    })
-}
-
-// loadContent('php/default_view.php')
-loadContent('php/patient_register_form.php')
-// loadContent('php/opd_referral_form.php?type=OB&code=BGHMC-0001')
-// loadContent('php/incoming_form.php')
-
-$(document).ready(function(){
     $(window).on('load' , function(event){
         event.preventDefault();
         current_page = "default_page"
         $('#current-page-input').val(current_page)
-        
+
         // loadContent('php/default_view.php')
         // loadContent('php/patient_register_form.php')
         // loadContent('php/opd_referral_form.php')
@@ -235,9 +299,7 @@ $(document).ready(function(){
     $('#sdn-title-h1').on('click' , function(event){
         event.preventDefault();
         loadContent('php/default_view.php')
-
-    //document.getElementById("notif-sound").pause();
-    // document.getElementById("notif-sound").currentTime = 0;
+        
     })
 
     $('#dashboard-incoming-btn').on('click' , function(event){
@@ -327,43 +389,36 @@ $(document).ready(function(){
 
 
     $('#notif-div').on('click' , function(event){
-        if($('#notif-span').val() === 0){
+        $('#notif-sub-div').removeClass('hidden')
+    })
+
+    $('#notif-sub-div').on('click' , function(event){
+        if(parseInt($('#notif-span').text() === 0)){
+            console.log('here')
             $('#notif-circle').addClass('hidden')
             document.getElementById("notif-sound").pause();
             document.getElementById("notif-sound").currentTime = 0;
         }else{
+            console.log('asdf')
+            $('#notif-sub-div').addClass('hidden')
             loadContent('php/incoming_form.php')
             current_page = "incoming_page"
             $('#current-page-input').val(current_page)
         }
 
+        document.getElementById('notif-sub-div').style.display = 'none'
+        // $('#notif-sub-div').addClass('hidden')
     })
 
     // mikas
     // MIKAS3255
 
-
-
-$(document).ready(function(){
     $('#outgoing-sub-div-id').on('click' , function(event){
-            event.preventDefault();
-            // // document.querySelector('#default-div').classList.add('hidden')
-            // // Define your parameters
-            // // Assuming your base URL is 'https://example.com/'
-            // const baseUrl = 'http://192.168.42.222:8035/main.php';
+        event.preventDefault();
 
-            // // File path and parameters
-            // const filePath = 'php/outgoing_form.php';
-            // const pageParam = 'outgoing_patient_form';
-
-            // // Construct the URL
-            // const url = `${baseUrl}${filePath}?page=${pageParam}`;
-
-            // // Use the constructed URL
-            // loadContent(url);
-            loadContent('php/outgoing_form.php')
-            current_page = "outgoing_page"
-            $('#current-page-input').val(current_page)
+        loadContent('php/outgoing_form.php')
+        current_page = "outgoing_page"
+        $('#current-page-input').val(current_page)
 
         $('#outgoing-sub-div-id').removeClass('opacity-30')
         $('#outgoing-sub-div-id').addClass('opacity-100')
@@ -378,12 +433,14 @@ $(document).ready(function(){
         $('#patient-reg-form-sub-side-bar').removeClass('opacity-100')
         $('#patient-reg-form-sub-side-bar').removeClass('bg-[#0a0e0f]')
     })
-    })
-})
 
-$(document).ready(function(){
     $('#incoming-sub-div-id').on('click' , function(event){
         event.preventDefault();
+
+        // stopSound()
+        // clearTimeout(fetch_timer)
+        // timer_running = false;
+
         loadContent('php/incoming_form.php')
         current_page = "incoming_page"
         $('#current-page-input').val(current_page)
@@ -401,11 +458,10 @@ $(document).ready(function(){
         $('#patient-reg-form-sub-side-bar').removeClass('opacity-100')
         $('#patient-reg-form-sub-side-bar').removeClass('bg-[#0a0e0f]')
     })
-})
 
-$(document).ready(function(){
     $('#patient-reg-form-sub-side-bar').on('click' , function(event){
         event.preventDefault();
+
         loadContent('php/patient_register_form.php')
         current_page = "patient_register_page"
         $('#current-page-input').val(current_page)
@@ -424,11 +480,10 @@ $(document).ready(function(){
         $('#incoming-sub-div-id').removeClass('opacity-100')
         $('#incoming-sub-div-id').removeClass('bg-[#0a0e0f]')
     })
-})
 
-$(document).ready(function(){
     $('#pcr-request-id').on('click' , function(event){
         event.preventDefault();
     })
     
+
 })

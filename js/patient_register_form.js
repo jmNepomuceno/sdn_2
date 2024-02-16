@@ -1,4 +1,13 @@
 $(document).ready(function(){
+    const loadContent = (url) => {
+        $.ajax({
+            url:url,
+            success: function(response){
+                // console.log(response)
+                $('#container').html(response);
+            }
+        })
+    }
     
     $('#check-if-registered-btn').on('click' , function(event){
         // console.log("asdf")
@@ -547,6 +556,7 @@ $(document).ready(function(){
             case 'er' : chosen_case = "ER"; break;
             case 'ob' : chosen_case = "OB"; break;
             case 'opd' : chosen_case = "OPD"; break;
+            case 'toxicology' : chosen_case = "Toxicology"; break;
             // case 'er' : chosen_case = "ER";
         }
         console.log(chosen_case)

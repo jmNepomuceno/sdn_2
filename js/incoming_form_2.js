@@ -81,7 +81,7 @@ $(document).ready(function(){
     document.addEventListener('mousemove', handleUserActivity);
 
     // Set up a timer to check user inactivity periodically
-    const inactivityInterval = 42000; // Execute every 5 seconds (adjust as needed)
+    const inactivityInterval = 2000; // Execute every 5 seconds (adjust as needed)
 
     function startInactivityTimer() {
         inactivityTimer = setInterval(() => {
@@ -479,7 +479,7 @@ $(document).ready(function(){
                 type_color = 'bg-green-500';
             }else if(response[i]['type'] == 'ER'){
                 type_color = 'bg-sky-700';
-            }else if(response[i]['type'] == 'PCR'){
+            }else if(response[i]['type'] == 'PCR' || response[i]['type'] == 'Toxicology'){
                 type_color = 'bg-red-600';
             }
 
@@ -555,7 +555,7 @@ $(document).ready(function(){
                 }
             }
 
-            console.log(`Difference: ${hours_bd}:${minutes_bd}:${seconds_bd}`);
+            // console.log(`Difference: ${hours_bd}:${minutes_bd}:${seconds_bd}`);
 
             const td_time_div_label_1_1 = document.createElement('label')
             td_time_div_label_1_1.textContent = (response[i]['reception_time'] !== "") ? `Queue Time: ${hours_bd}:${minutes_bd}:${seconds_bd}` : 'Queue Time: 00:00:00'
@@ -763,7 +763,7 @@ $(document).ready(function(){
             // }
         }
 
-        console.log(document.querySelectorAll('.accordion-btn').length)
+        // console.log(document.querySelectorAll('.accordion-btn').length)
     }
 
     // MAIN BUTTON FUNCTIONALITIES - START - APPROVED - CLOSED - N
@@ -803,6 +803,8 @@ $(document).ready(function(){
                 break
             }
         }
+
+    
 
         console.log("roflmao: " + index_pat_status)
         global_pat_status[index_pat_status].textContent = "On-Process"
@@ -1346,6 +1348,12 @@ $(document).ready(function(){
         }
     })
 
+    $(document).on('keypress', function(event) {
+        if (event.which === 13 || event.keyCode === 13) {
+            $('#incoming-search-btn').trigger('click');
+        }
+    });
+
     // SEARCHING FUNCTIONALITIES
     $('#incoming-search-btn').on('click' , function(event){        
         $('#incoming-clear-search-btn').removeClass('opacity-30 pointer-events-none')
@@ -1479,10 +1487,17 @@ $(document).ready(function(){
             document.querySelectorAll('.tr-incoming')[global_breakdown_index].style.height = "300px"
             document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'block'
             toggle_accordion_obj[global_breakdown_index] = false
+
+            // fa-solid fa-plus
+            $('.accordion-btn').eq(global_breakdown_index).removeClass('fa-plus')
+            $('.accordion-btn').eq(global_breakdown_index).addClass('fa-minus')
         }else{
             document.querySelectorAll('.tr-incoming')[global_breakdown_index].style.height = "61px"
             document.querySelectorAll('.breakdown-div')[global_breakdown_index].style.display = 'none'
             toggle_accordion_obj[global_breakdown_index] = true
+
+            $('.accordion-btn').eq(global_breakdown_index).addClass('fa-plus')
+            $('.accordion-btn').eq(global_breakdown_index).removeClass('fa-minus')
         }
     })
 })

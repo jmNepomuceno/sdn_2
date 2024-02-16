@@ -96,7 +96,9 @@
             </div>
             <div id="search-result-div" class="w-[95%] h-[82%] flex flex-col justify-start items-center">
                 <!-- <h1 class="mt-2">No Patient Found</h1> -->
+                
                 <!-- SEARCH QUERY RESULT -->
+                <div class="search-sub-div"></div>
                 <!-- <div class="w-full h-[80px] flex flex-col justify-center items-center border-b border-black bg-[#e6e6e6]">
                     <div class="w-full h-[40%] flex flex-row justify-between items-center">
                         <h1 class="ml-2">Patient ID: 292719</h1>
@@ -738,6 +740,6 @@
     </div>
 
     <script type="text/javascript" src="./js/patient_register_form.js?v=<?php echo time(); ?>"></script>
-    <script src="./js/search_name.js?v=<?php echo time(); ?>"></script>    
+    <script src="./js/search_name_2.js?v=<?php echo time(); ?>"></script>    
 </body>
 </html>

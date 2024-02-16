@@ -1,3 +1,5 @@
+const initialPieChartLoad = () =>{
+
 const add = document.querySelectorAll('.add');
 const totals_elements =document.querySelectorAll('.sumCell');
 let totals_array = [];
@@ -63,8 +65,6 @@ rows.forEach(function(row) {
     // Add the rowSum to the sum of the first column.
     totalSum += rowSum;
 });
-
-
 
 
 //For Secondary
@@ -388,7 +388,6 @@ const data = {
     // temp_data3.push(document.querySelectorAll('.sumCell')[i].value)
     temp_datasets.push(document.querySelectorAll('.sumCell')[i].textContent)
   }
-  // console.log(temp_data3)
   // rasi
   const data3 = {
     labels: temp_data3,
@@ -454,7 +453,9 @@ const data = {
         }
       }
   });
+}
 
+initialPieChartLoad();
  
   
 const date = document.getElementById('date');
@@ -501,7 +502,7 @@ date.textContent = "As of " + formattedDate_word;
 
 
 
-  button1 = document.getElementById('butbut');
+  button1 = document.getElementById('filter-date-btn');
 
    // Replace 'yourTableId' with the actual ID of your table
 
@@ -520,10 +521,7 @@ date.textContent = "As of " + formattedDate_word;
       var previousRow = table.rows[rowIndex - 1]; // Get the previous row
       for (var i = 0; i < previousRow.cells.length; i++) {
           // Create a new cell for each cell in the previous row
-          var newCell = newRow.insertCell();
-  
-          // Set the content of the new cell based on the content of the corresponding cell in the previous row
-          newCell.textContent = "New Content"; // Replace this with your logic                                                                                                                                                                                                                                                                                                                                                                                                                                         
+          var newCell = newRow.insertCell();                                                                                                                                                                                                                                                                                                                                                                                                                                       
       }
   }
   
@@ -534,7 +532,7 @@ date.textContent = "As of " + formattedDate_word;
 //  ME ME ME ME ME ME ME
 $(document).ready(function(){
   $('#total-processed-refer').text($('#total-processed-refer-inp').val())
-  console.log($('#total-processed-refer-inp').val())
+  
   const playAudio = () =>{
     let audio = document.getElementById("notif-sound")
     audio.muted = false;
@@ -542,6 +540,29 @@ $(document).ready(function(){
         'Error playing audio: ' , error
     })
   }
+
+  $('#notif-div').on('click' , function(event){
+    if ($('#notif-sub-div').hasClass('hidden')) {
+      $('#notif-sub-div').removeClass('hidden');
+  } else {
+      $('#notif-sub-div').addClass('hidden');
+  }
+})
+
+$('#notif-sub-div').on('click' , function(event){
+    if($('#notif-span').val() === 0){
+        $('#notif-circle').addClass('hidden')
+        document.getElementById("notif-sound").pause();
+        document.getElementById("notif-sound").currentTime = 0;
+    }else{
+        window.location.href = "http://192.168.42.222:8035/main.php?loadContent=php/incoming_form.php"
+
+        // window.location.pathname = "/newpage.html";
+        current_page = "incoming_page"
+        $('#current-page-input').val(current_page)
+        $('#notif-sub-div').addClass('hidden')
+    }
+})
 
   $('#history-log-btn').on('click' , function(event){
     event.preventDefault();
@@ -562,25 +583,63 @@ $(document).ready(function(){
   
   function fetchMySQLData() {
     $.ajax({
-        url: '../php/fetch_interval.php',
-        method: "POST",
-        data : {
-            from_where : 'bell'
-        },
-        success: function(data) {
-            console.log(data);
-            $('#notif-span').text(data);
-            if (parseInt(data) >= 1) {
-                $('#notif-circle').removeClass('hidden');
-                
-                playAudio();
-            } else {
-                $('#notif-circle').addClass('hidden');
-            }
-            
-            setTimeout(fetchMySQLData, 5000);
-        }
-    });
+      url: '../php/fetch_interval.php',
+      method: "POST",
+      data : {
+          from_where : 'bell'
+      },
+      success: function(response) {
+          response = JSON.parse(response);  
+          // console.log(response);
+          // console.log('pot')
+
+          $('#notif-span').text(response.length);
+          $('#notif-circle').removeClass('hidden');
+              
+              // populate notif-sub-div
+              // document.querySelector('.notif-sub-div').innerHTML = 
+
+              let type_counter = []
+              for(let i = 0; i < response.length; i++){
+
+                  if(!type_counter.includes(response[i]['type'])){
+                      type_counter.push(response[i]['type'])
+                  }
+              }
+
+              // console.log(type_counter)
+              
+              document.getElementById('notif-sub-div').innerHTML = '';
+              for(let i = 0; i < type_counter.length; i++){
+                  let type_var  = type_counter[i]
+                  let type_counts  = 0
+
+                  for(let j = 0; j < response.length; j++){
+                      if(type_counter[i] ===  response[j]['type']){
+                          type_counts += 1
+                      }
+                  }
+
+                  if(i % 2 === 0){
+                      document.getElementById('notif-sub-div').innerHTML += '\
+                      <div class="h-[30px] w-[90%] border border-black flex flex-row justify-evenly items-center mt-1 bg-transparent text-white opacity-30 hover:opacity-100">\
+                      <h4 class="font-bold text-lg">' + type_counts + '</h4>\
+                          <h4 class="font-bold text-lg">' + type_var + '</h4>\
+                      </div>\
+                  ';
+                  }else{
+                      document.getElementById('notif-sub-div').innerHTML += '\
+                      <div class="h-[30px] w-[90%] border border-black flex flex-row justify-evenly items-center mt-1 bg-white opacity-30 hover:opacity-100">\
+                      <h4 class="font-bold text-lg">' + type_counts + '</h4>\
+                          <h4 class="font-bold text-lg">' + type_var + '</h4>\
+                      </div>\
+                  ';
+                  }
+              }
+          
+          fetch_timer = setTimeout(fetchMySQLData, 5000);
+      }
+  });
   }
 
   fetchMySQLData(); 
@@ -660,6 +719,68 @@ $(document).ready(function(){
     window.location.href = "../main.php";
   })
 
+  $('#filter-date-btn').on('click' , function(event){
+    event.preventDefault();
+
+    const data = {
+      from_date : $('#from-date-inp').val(),
+      to_date : $('#to-date-inp').val(),
+      where : 'incoming'
+    }
+
+    console.log(data)
+    
+    $.ajax({
+      url: '../php/filter_date_incoming.php',
+      method: "POST",
+      data : data,
+      success: function(response) { 
+        response = JSON.parse(response);
+        console.log(response)
+
+        $('#total-processed-refer').text(response.totalReferrals)
+        $('#average-reception-id').text(response.averageDuration_reception)
+        $('#average-approve-id').text(response.averageDuration_approval)
+        $('#average-total-id').text(response.averageDuration_total)
+        $('#fastest-id').text(response.fastest_response_final)
+        $('#slowest-id').text(response.slowest_response_final)
+      }
+    });
+
+
+    // populate table
+    $.ajax({
+      url: '../php/filter_date_table_incoming.php',
+      method: "POST",
+      data : data,
+      success: function(response) {
+        console.log(response)
+        document.getElementById('tbody-class').innerHTML = response
+
+        let chart1 = Chart.getChart('myPieChart');
+        if (chart1) {
+            chart1.destroy();
+        }
+
+        // Destroy chart with ID 'myPieChart2' if it exists
+        let chart2 = Chart.getChart('myPieChart2');
+        if (chart2) {
+            chart2.destroy();
+        }
+
+        // Destroy chart with ID 'myPieChart3' if it exists
+        let chart3 = Chart.getChart('myPieChart3');
+        if (chart3) {
+            chart3.destroy();
+        }
+
+        initialPieChartLoad();
+
+      }
+    });
+
+  })
+
   // Get the timer element
   let recep_time = document.getElementById('average-reception-id').textContent
   let approve_time = document.getElementById('average-approve-id').textContent
@@ -734,7 +855,6 @@ $(document).ready(function(){
       return (number < 10) ? '0' + number : number;
   }
 
-  
 })
 
 

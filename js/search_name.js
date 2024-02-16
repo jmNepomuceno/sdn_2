@@ -168,6 +168,7 @@ $(document).ready(function(){
                             while (parentElement.firstChild) {
                                 parentElement.removeChild(parentElement.firstChild);
                             }
+                            
                             //Personal Information
                             $('#hpercode-input').val(response[i].hpercode)
                             document.querySelector('#hperson-last-name').value = response[i].pat_last_name

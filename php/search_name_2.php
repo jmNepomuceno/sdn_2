@@ -11,6 +11,7 @@
     $search_mname = filter_input(INPUT_POST, 'search_mname');
 
 
+
     $conditions = array();
 
     if (!empty($search_lname)) {
@@ -51,12 +52,32 @@
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $finalJsonString = json_encode($data);
-    echo $finalJsonString;
+    // $finalJsonString = json_encode($data);
+    // echo $finalJsonString;
 
-    // if($sql != "none"){
-        
-    // }else{
-    //     echo "No User Found";
-    // }
+    if(count($data) >= 1){
+        for($i = 0; $i < count($data); $i++){
+            if ($i % 2 == 0) {
+                $bg_color = "#e6e6e6";
+            } else {
+                $bg_color = "#ffffff";
+            }
+
+            echo '<div class="search-sub-div w-full h-[80px] flex flex-col justify-center items-center border-b border-black bg-['. $bg_color.'] cursor-pointer hover:bg-[#85b2f9] text-sm">';
+            echo   '<div class="w-full h-[40%] flex flex-row justify-between items-center">';
+            echo       '<h1 class="ml-2">Patient ID: <span class="search-sub-code">'. $data[$i]['hpercode'] .'</span> </h1>';
+            echo       '<div class="w-[25%] h-full flex flex-row justify-around items-center">';
+            echo          '<h1>'. $data[$i]['patbdate'] .'</h1>';
+            echo           '<span class="fa-solid fa-user"></span>';
+            echo     ' </div>';
+            echo ' </div>';
+            echo ' <div class="w-full h-[40%] flex flex-row justify-between items-center">';
+            echo     ' <h3 class="uppercase ml-2 font-bold underline">'. $data[$i]['patlast'] . ", " . $data[$i]['patfirst'] . " " . $data[$i]['patmiddle'] .'</h3>';
+            echo      '<h3 class="mr-4">' . (isset($data[$i]['status']) ? "Status: Referred-" . $data[$i]['status'] : "Status: Not yet referred") . '</h3>';
+            echo  '</div>';
+            echo'</div>';
+        }
+    }else{
+        echo "No User Found";
+    }
 ?>
