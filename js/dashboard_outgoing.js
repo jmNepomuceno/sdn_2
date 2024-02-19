@@ -525,7 +525,7 @@ date.textContent = "As of " + formattedDate_word;
           var newCell = newRow.insertCell();
   
           // Set the content of the new cell based on the content of the corresponding cell in the previous row
-          newCell.textContent = "New Content"; // Replace this with your logic                                                                                                                                                                                                                                                                                                                                                                                                                                         
+          // newCell.textContent = "New Content"; // Replace this with your logic                                                                                                                                                                                                                                                                                                                                                                                                                                         
       }
   }
   
@@ -722,15 +722,14 @@ $(document).ready(function(){
 
   $('#filter-date-btn').on('click' , function(event){
     event.preventDefault();
-
+    console.log('here')
+    
     const data = {
       from_date : $('#from-date-inp').val(),
       to_date : $('#to-date-inp').val(),
       where: 'outgoing',
     }
 
-    console.log(data)
-    
     $.ajax({
       url: '../php/filter_date_incoming.php',
       method: "POST",
@@ -748,14 +747,16 @@ $(document).ready(function(){
       }
     });
 
-
+    console.log(data)
+    
     // populate table
     $.ajax({
       url: '../php/filter_date_table_incoming.php',
       method: "POST",
       data : data,
       success: function(response) {
-        console.log(response)
+        // console.log(response)
+
         document.getElementById('tbody-class').innerHTML = response
 
         let chart1 = Chart.getChart('myPieChart');

@@ -721,6 +721,7 @@ $('#notif-sub-div').on('click' , function(event){
 
   $('#filter-date-btn').on('click' , function(event){
     event.preventDefault();
+    console.log('here')
 
     const data = {
       from_date : $('#from-date-inp').val(),
