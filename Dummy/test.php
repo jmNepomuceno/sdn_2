@@ -1,43 +1,68 @@
-<?php 
-    // session_start();
-    // include('../database/connection2.php');
-    // // fetch sdn hospitals and sdn users
-    // $sql = "SELECT * FROM sdn_hospital";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
-    // $data_sdn_hospitals = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // // echo '<pre>'; print_r($data_sdn_hospitals); echo '</pre>';
-
-    // $sql = "SELECT * FROM sdn_users";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
-    // $data_sdn_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // // echo '<pre>'; print_r($data_sdn_users); echo '</pre>';
-
-    // $sql = "SELECT hospital_code FROM sdn_users WHERE user_count=2";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
-    // $data_sdn_users_count2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // echo '<pre>'; print_r($data_sdn_users_count2); echo '</pre>';
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    
+    <title>Highlight Button</title>
+    <style>
+        /* Overlay to dim the screen */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 10;
+            pointer-events: none; /* Allow clicks to pass through */
+        }
+
+        /* Highlighted area around Button 1 */
+        #highlight {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.0); /* Fully transparent */
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); /* Create the overlay effect */
+            pointer-events: none; /* Allow clicks to pass through */
+        }
+
+        /* Ensure Button 1 is above the overlay */
+        #button-1 {
+            position: relative;
+            z-index: 20; /* Higher than the overlay */
+        }
+    </style>
 </head>
 <body>
-    <div id="particles-js"></div> 
-    <div class="count-particles"> <span class="js-count-particles">--</span> particles </div> <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script> 
-    <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+    <div id="overlay"></div>
+    <button id="button-1">Button 1</button>
+    <button id="button-2">Button 2</button>
+    <button id="button-3">Button 3</button>
 
-    <script type="text/javascript">
-        particlesJS("particles-js", {"particles":{"number":{"value":6,"density":{"enable":true,"value_area":800}},"color":{"value":"#1b1e34"},"shape":{"type":"polygon","stroke":{"width":0,"color":"#000"},"polygon":{"nb_sides":6},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":0.3,"random":true,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":160,"random":false,"anim":{"enable":true,"speed":10,"size_min":40,"sync":false}},"line_linked":{"enable":false,"distance":200,"color":"#ffffff","opacity":1,"width":2},"move":{"enable":true,"speed":8,"direction":"none","random":false,"straight":false,"out_mode":"out","bounce":false,"attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":false,"mode":"grab"},"onclick":{"enable":false,"mode":"push"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200,"duration":0.4},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true});var count_particles, stats, update; stats = new Stats; stats.setMode(0); stats.domElement.style.position = 'absolute'; stats.domElement.style.left = '0px'; stats.domElement.style.top = '0px'; document.body.appendChild(stats.domElement); count_particles = document.querySelector('.js-count-particles'); update = function() { stats.begin(); stats.end(); if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) { count_particles.innerText = window.pJSDom[0].pJS.particles.array.length; } requestAnimationFrame(update); }; requestAnimationFrame(update);;
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const button1 = document.getElementById("button-1");
+            const overlay = document.getElementById("overlay");
+
+            // Create the highlight effect
+            const highlight = document.createElement("div");
+            highlight.id = "highlight";
+            document.body.appendChild(highlight);
+
+            function updateHighlight() {
+                const rect = button1.getBoundingClientRect();
+                highlight.style.width = `${rect.width}px`;
+                highlight.style.height = `${rect.height}px`;
+                highlight.style.top = `${rect.top + window.scrollY}px`;
+                highlight.style.left = `${rect.left + window.scrollX}px`;
+            }
+
+            // Initial highlight update
+            updateHighlight();
+
+            // Update highlight on window resize or scroll
+            window.addEventListener("resize", updateHighlight);
+            window.addEventListener("scroll", updateHighlight);
+        });
     </script>
 </body>
 </html>
