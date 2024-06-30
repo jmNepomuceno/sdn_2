@@ -15,7 +15,11 @@
         $post_value_reload = $_SESSION['post_value_reload'];
     }
 
-    echo count($data);
+    // echo count($data);
+
+    // $sql = "UPDATE incoming_interdept SET unRead='1', interdept_status='Pending', referring_seenTime=null, referring_seenBy=null, curr_time=null WHERE hpercode='PAT000023'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 ?>
 
  
@@ -146,8 +150,7 @@
                                                 
                                                 <td id="dt-status">
                                                     <div> 
-                                                        
-                                                        <label class="pat-status-incoming">'.$data[0]['status_interdept'].'</label>
+                                                        <label class="pat-status-incoming">'.$row['interdept_status'].'</label>
                                                         <i class="pencil-btn fa-solid fa-pencil"></i>
                                                         <input class="hpercode" type="hidden" name="hpercode" value= ' . $row['hpercode'] . '>
                                                     </div>

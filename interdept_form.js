@@ -155,50 +155,15 @@ $(document).ready(function(){
     });
 
     function loadStateFromSession() {
-        console.log(post_value_reload, typeof post_value_reload)
-        // upon logout
-        if(post_value_reload === 'true'){
-            console.log('366')
-            $.ajax({
-                url: '../save_process_time.php',
-                method: "POST",
-                data : {what: 'continue'},
-                dataType : 'JSON',
-                success: function(response){
-                    running_timer_var = response[0].progress_timer
-                    post_value_reload_bool = (post_value_reload === "true") ? true : false;
-
-                    running_bool_var =  (running_bool_var === "true") ? true : false;
-                    // initialize mo na lang na false agad yung running na session, tanggalin mo na yung global variable sa taas(?)
-                    // tapos ayusin mo yung code mo, nakadepende pa din sa hpercode, depende mo sa referral ID dapat pag multiple referral per account.
-                    // running_bool_var = true
-
-                    elapsedTime = (running_timer_var || 0) * 1000; // Convert seconds to milliseconds
-                    startTime = running_startTime_var ? running_startTime_var : performance.now() - elapsedTime;
-                    running = running_bool_var || false;
-
-                    startTime = performance.now() - elapsedTime;
-                    requestId = requestAnimationFrame(runTimer(0).updateTimer);
-                }
-            })
-        }else{
-            console.log('390')
-            running_bool_var =  (running_bool_var === "true") ? true : false;
+        running_bool_var =  (running_bool_var === "true") ? true : false;
             elapsedTime = (running_timer_var || 0) * 1000; // Convert seconds to milliseconds
             startTime = running_startTime_var ? running_startTime_var : performance.now() - elapsedTime;
             running = running_bool_var || false;
-    
-    
-            // if (running && previous_loadcontent === "incoming_ref") {
-            //     startTime = performance.now() - elapsedTime;
-            //     requestId = requestAnimationFrame(runTimer(0).updateTimer);
-            // }
-
+            
             if (running) {
                 startTime = performance.now() - elapsedTime;
                 requestId = requestAnimationFrame(runTimer(0).updateTimer);
             }
-        }
     }
     // sevich
     // on load
@@ -289,7 +254,7 @@ $(document).ready(function(){
                             curr_index = i;
                         }
                     }
-
+                    console.log(elapsedTime / 1000)
                     $.ajax({
                         url: './fetch_onProcess.php',
                         method: "POST", 
