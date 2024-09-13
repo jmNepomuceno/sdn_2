@@ -1,9 +1,8 @@
 <?php 
-    include('./connection2.php');
-    session_start();
-    date_default_timezone_set('Asia/Manila');
+    include ('../../session.php');
+    include('../db/mysqlconnection.php');
 
-    $_SESSION['running_timer'] = $_POST['timer']; // elapsedTime
+    $_SESSION['running_timer'] = $_POST['timer']; 
     $_SESSION['running_bool'] = $_POST['running_bool'];
     $_SESSION['running_startTime'] = $_POST['startTime'];
 

@@ -1,8 +1,6 @@
 <?php
-    session_start();
-    date_default_timezone_set( 'Asia/Manila' );
-    include('./connection2.php');
-
+    include ('../../session.php');
+    include('../db/mysqlconnection.php');
 
     $hpercode = $_POST['hpercode'];
     $sql = "SELECT * FROM incoming_referrals WHERE hpercode='". $hpercode ."' ";

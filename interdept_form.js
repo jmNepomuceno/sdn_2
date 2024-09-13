@@ -4,6 +4,7 @@ $(document).ready(function(){
         "paging": true, 
         "pageLength": 6, 
         "lengthMenu": [ [6, 10, 25, 50, -1], [6, 10, 25, 50, "All"] ],
+        "searching" : false
     });
 
     var dataTable = $('#myDataTable').DataTable();
@@ -29,7 +30,6 @@ $(document).ready(function(){
     }
 
     function handleUserInactivity() {
-        console.log('inactive')
         userIsActive = false;
         $.ajax({
             url: '../Includes/sdn_php/fetch_interval.php',
@@ -39,24 +39,24 @@ $(document).ready(function(){
             },
             success: function(response) {
                 // console.log(response)
-
+                console.log('fetch interval')
                 dataTable.clear();
                 dataTable.rows.add($(response)).draw();
 
-                const pencil_elements = document.querySelectorAll('.pencil-btn');
-                    pencil_elements.forEach(function(element, index) {
-                    element.addEventListener('click', function() {
-                        console.log('den')
-                        ajax_method(index)
-                    });
-                });
+                // const pencil_elements = document.querySelectorAll('.pencil-btn');
+                //     pencil_elements.forEach(function(element, index) {
+                //     element.addEventListener('click', function() {
+                //         console.log('den')
+                //         ajax_method(index)
+                //     });
+                // });
             }
         });
     }
 
     document.addEventListener('mousemove', handleUserActivity);
 
-    const inactivityInterval = 1115000; 
+    const inactivityInterval = 1000; 
 
     function startInactivityTimer() {
         inactivityTimer = setInterval(() => {
@@ -80,7 +80,7 @@ $(document).ready(function(){
         }
         console.log(data)
         $.ajax({
-            url: './process_pending.php',
+            url: '../Includes/sdn_php/process_pending.php',
             method: "POST", 
             data:data,
             success: function(response){
@@ -94,7 +94,7 @@ $(document).ready(function(){
                         from : 'interdept'
                     }
                     $.ajax({
-                        url: './pendingToOnProcess.php',
+                        url: '../Includes/sdn_php/pendingToOnProcess.php',
                         method: "POST", 
                         data:data
                     })
@@ -121,37 +121,12 @@ $(document).ready(function(){
         })
     }
 
-    const pencil_elements = document.querySelectorAll('.pencil-btn');
-        pencil_elements.forEach(function(element, index) {
-        element.addEventListener('click', function() {
-            console.log('den')
-
-            ajax_method(index)
-
-            // lobal_index = index
-
-            // possible redundant
-            // const data = {
-            //     hpercode: document.querySelectorAll('.hpercode')[index].value,
-            //     from: 'incoming'
-            // }
-            // $.ajax({
-            //     url: '../php/process_pending.php',
-            //     method: "POST", 
-            //     data:data,
-            //     success: function(response){
-            //         document.querySelector('.ul-div').innerHTML = ''
-            //         document.querySelector('.ul-div').innerHTML += response
-                    
-            //         // if(document.querySelectorAll('.pat-status-incoming')[index].textContent == 'Pending'){
-            //         //     console.log('here')
-            //         //     runTimer(index, 0, 0, 0) // secs, minutes, hours
-            //         // }
-            //         myModal.show();
-
-            //     }
-            // })
-        });
+    dataTable.on('click', '.pencil-btn', function () {
+        console.log('den');
+        var row = $(this).closest('tr');
+        var rowIndex = dataTable.row(row).index();
+        console.log(rowIndex)
+        ajax_method(rowIndex);
     });
 
     function loadStateFromSession() {
@@ -189,7 +164,7 @@ $(document).ready(function(){
         })
         
         $.ajax({
-            url: '../php_2/fetch_onProcess.php',
+            url: '../Includes/sdn_php/fetch_onProcess.php',
             method: "POST", 
             data:{
                 // timer: document.querySelectorAll('.stopwatch')[curr_index].textContent,
@@ -245,6 +220,7 @@ $(document).ready(function(){
                         document.querySelectorAll('.stopwatch')[index].textContent = formatTime(elapsedTime);
 
                         document.querySelectorAll('.pat-status-incoming')[index].textContent = 'On-Process';
+                        document.getElementById('pat-status-form').textContent = 'On-Process';
                     }
         
                     // console.log("global_timer: " + global_timer);
@@ -254,9 +230,8 @@ $(document).ready(function(){
                             curr_index = i;
                         }
                     }
-                    console.log(elapsedTime / 1000)
                     $.ajax({
-                        url: './fetch_onProcess.php',
+                        url: '../Includes/sdn_php/fetch_onProcess.php',
                         method: "POST", 
                         data:{
                             // timer: document.querySelectorAll('.stopwatch')[curr_index].textContent,
@@ -326,7 +301,8 @@ $(document).ready(function(){
 
     // yes-modal-btn-incoming
     $('#yes-modal-btn-incoming').on('click' , function(event){
-        clearInterval(running_timer_interval)
+        runTimer().stop()
+
         let data = {
             hpercode: document.querySelectorAll('.hpercode')[0].value,
             final_time : global_timer
@@ -339,7 +315,7 @@ $(document).ready(function(){
             data:data,
             success: function(response){
                 // response = JSON.parse(response);   
-                // console.log(response)
+                console.log(response)
                 
                 myModal.hide()
                 document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Approved'
@@ -352,13 +328,13 @@ $(document).ready(function(){
                     toggle_accordion_obj[i] = true
                 }
                 
-                const pencil_elements = document.querySelectorAll('.pencil-btn');
-                    pencil_elements.forEach(function(element, index) {
-                    element.addEventListener('click', function() {
-                        console.log('den')
-                        ajax_method(index)
-                    });
-                });
+                // const pencil_elements = document.querySelectorAll('.pencil-btn');
+                //     pencil_elements.forEach(function(element, index) {
+                //     element.addEventListener('click', function() {
+                //         console.log('den')
+                //         ajax_method(index)
+                //     });
+                // });
             }
         })
     })
@@ -369,30 +345,13 @@ $(document).ready(function(){
     //     color:#009688;
     // }
 
-    $('#incoming-req-div').on('mouseenter' , function(event){
-        console.log('here')
-        $('#incoming-req-div').css('background' , 'white')
-        $('#incoming-req-div i').css('color' , '#009688')
-        $('#incoming-req-div h3').css('color' , '#009688')
+    $('#incoming-req-div').on('click' , function(event){
+        $('#incoming-req-div').css('background' , '#00332e')
+        $('#history-div').css('background' , 'none')
     })
 
-    $('#incoming-req-div').on('mouseleave' , function(event){
-        $('#incoming-req-div').css('background' , '#009688')
-        $('#incoming-req-div i').css('color' , 'white')
-        $('#incoming-req-div h3').css('color' , 'white')
+    $('#history-div').on('click' , function(event){
+        $('#incoming-req-div').css('background' , 'none')
+        $('#history-div').css('background' , '#00332e')
     })
-
-    $('#history-div').on('mouseenter' , function(event){
-        $('#history-div').css('background' , 'white')
-        $('#history-div i').css('color' , '#009688')
-        $('#history-div h3').css('color' , '#009688')
-    })
-
-    $('#history-div').on('mouseleave' , function(event){
-        $('#history-div').css('background' , '#009688')
-        $('#history-div i').css('color' , 'white')
-        $('#history-div h3').css('color' , 'white')
-    })
-
-
 })

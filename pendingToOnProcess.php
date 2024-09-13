@@ -1,6 +1,7 @@
 <?php
-    include('./connection2.php');
-    session_start();
+    include ('../../session.php');
+    include('../db/mysqlconnection.php');
+
     $hpercode = $_POST['hpercode'];
 
     // if($_POST['from'] === 'incoming'){
@@ -8,6 +9,8 @@
     // }else{
     //     $sql = "UPDATE incoming_referrals SET status_interdept='On-Process' WHERE hpercode= '". $hpercode ."' ";
     // }
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 
     $sql = "UPDATE incoming_referrals SET status_interdept='On-Process' WHERE hpercode= '". $hpercode ."' ";
     $stmt = $pdo->prepare($sql);

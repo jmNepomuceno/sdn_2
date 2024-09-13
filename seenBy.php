@@ -1,6 +1,6 @@
 <?php
-    include('./connection2.php');
-    session_start();
+    include ('../../session.php');
+    include('../db/mysqlconnection.php');
     date_default_timezone_set('Asia/Manila');
 
     // insert the data into incoming_interdept
@@ -15,5 +15,5 @@
     $stmt->execute();
 
     // $response = json_encode($data);
-    // echo $response;
+    echo $name;
 ?>
